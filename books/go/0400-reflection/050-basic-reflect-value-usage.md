@@ -15,7 +15,7 @@ value.Interface().(int) // 4
 // this value
 value.Type().Name() // int
 
-value.SetInt(5) // panics -- non-pointer/slice/array types are not addressable
+value.SetInt(5) // panics -- non-pointer/non-slice/non-array types are not addressable
 
 x := 4
 reflect.ValueOf(&x).Elem().SetInt(5) // works
