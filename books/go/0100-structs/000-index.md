@@ -3,7 +3,7 @@ Title: Structs
 Id: 374
 ---
 
-A struct is groups related variables into a single entity.
+A struct groups related variables into a single entity.
 
 Additionally, structs can have methods, similar to classes in C++ or Java.
 
