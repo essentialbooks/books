@@ -10,10 +10,6 @@ type Foo struct {
 	Is []int
 }
 
-type Foo struct {
-	Is []int
-}
-
 func (fp *Foo) Panic() (err error) {
 	defer PanicRecovery(&err)
 	fp.Is[0] = 5
