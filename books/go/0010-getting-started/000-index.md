@@ -8,5 +8,5 @@ Id: 198
 * statically typed
 * fast
 * garbage collected
-* language-level suport for concurrency
+* language-level support for concurrency
 * familiar C-like syntax
