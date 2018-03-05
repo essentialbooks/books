@@ -22,7 +22,7 @@ var (
 )
 
 func f() {
-	// shorthand using local type inferenc
+	// shorthand using local type inference
 	// type of `i` is int and is infered from the value
 	// note: this is not allowed at top-level
 	i := 4
