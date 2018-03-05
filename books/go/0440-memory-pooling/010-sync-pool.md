@@ -38,7 +38,7 @@ func main() {
     // Get 'another' buffer
     s = pool.Get().(*bytes.Buffer)
     // Write to it
-    s.Write([]bytes("append"))
+    s.Write([]byte("append"))
     // At this point, if GC ran, this buffer *might* exist already, in
     // which case it will contain the bytes of the string "dirtyappend"
     fmt.Println(s)
