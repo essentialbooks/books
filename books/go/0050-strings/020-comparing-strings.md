@@ -13,7 +13,7 @@ This works as you would expect for ascii (i.e. english) text but might not be wh
 
 ## Compare with `strings.Compare`
 
-You can also compare with [strings.Compare](https://golang.org/pkg/strings/#Compare) but use `==`, `>` and `>` instead as it has the same semantics.
+You can also compare with [strings.Compare](https://golang.org/pkg/strings/#Compare) but use `==`, `>` and `<` instead as it has the same semantics.
 
 ## Case-insensitive compare
 
