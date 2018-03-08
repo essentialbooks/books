@@ -25,7 +25,7 @@ Method receiver can be either a value and a pointer.
 
 @file index2.go output sha1:18e4acb218010b37cc87e48b475ede8d9df4b6b7 goplayground:2KGrg2M4pj2
 
-As you can see, wehn `p` is of type `Person`, we can call both methods defined for `Person` and `*Person`. Go will automatically convert reciever `Person` to `*Person`.
+As you can see, when `p` is of type `Person`, we can call both methods defined for `Person` and `*Person`. Go will automatically convert receiver `Person` to `*Person`.
 
 It doesn't work the other way i.e. you can't call method with receiver `Person` on value with type `*Person`.
 
