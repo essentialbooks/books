@@ -34,7 +34,7 @@ return ErrGlobal
 
 Sometimes you want the error to have an identity so that callers can test if returned error is this specific error. You can do it by declaring global variable as `ErrGlobal` in example above.
 
-One example of such error from standard library is `io.EOF` although usually the naming convetion for such errors is `Err*`.
+One example of such error from standard library is `io.EOF` although usually the naming convention for such errors is `Err*`.
 
 ## Nil indicates no error
 
