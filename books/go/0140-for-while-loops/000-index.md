@@ -17,7 +17,7 @@ Every loop statement is optional.
 
 @file index2.go output sha1:6996b81f0765e774610e3af5af86b19e482a479d goplayground:Uhadj2YqDGU
 
-**Without test exoression**
+**Without test expression**
 
 Using `break` to terminate the loop
 
