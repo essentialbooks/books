@@ -10,7 +10,7 @@ When using `defer` keep the following in mind.
 
 Deferred statements have a function scope, not a block scope.
 
-In other words: deferred calls are execuated when exiting a function not when executing block crated with `if` or `for` statements.
+In other words: deferred calls are executed when exiting a function not when executing block created with `if` or `for` statements.
 
 @file defer_gotcha.go output sha1:56723587ae20f269117036508b8fd5905b3b58e9 goplayground:6ivihpJbkZb
 
@@ -39,4 +39,4 @@ We can fix by using a [closure](9226) to capture the variable:
 
 @file defer_gotcha3.go output sha1:debd2f22d4a3be8fbf97c4d3dbf049cbae4a1cfb goplayground:zTCIuDzpXS9
 
-Closures are more expensive because it requires allocating a behind-the-scenes object to callect all variables captured by the closure.
+Closures are more expensive because it requires allocating a behind-the-scenes object to collect all variables captured by the closure.
