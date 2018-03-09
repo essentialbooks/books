@@ -3,7 +3,7 @@ Title: Timout reading from channel with select
 Id: 143
 SOId: 6050
 ---
-Receiving froma channel with `<- chan` or `for range` loop blocks.
+Receiving from a channel with `<- chan` or `for range` loop blocks.
 
 Sometimes you want to limit time waiting for a value on a channel.
 
