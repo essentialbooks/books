@@ -5,7 +5,7 @@ SOId: 2607
 ---
 In Go goroutines share memory.
 
-It's good for performance but modyfing the same memory from multiple goroutines is not safe. It can lead to data races and crashes.
+It's good for performance but modifying the same memory from multiple goroutines is not safe. It can lead to data races and crashes.
 
 One way to avoid that is by using [channels](141) to transfer exclusive ownership of data.
 
