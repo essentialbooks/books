@@ -4,7 +4,7 @@ Id: 148
 SOId: 801000tb
 ---
 
-Receiving on a channel blocks if there is no data in the channel
+Receiving on a channel blocks if there is no data in the channel.
 
 What if you don't want to block?
 
