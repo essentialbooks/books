@@ -35,7 +35,7 @@ Channels have a fixed capacity.
 
 Channel created with `make(chan bool)` is called unbuffered channel. Send on unbuffered channel blocks until a corresponding receive.
 
-Channel created with `make(chan int, 3)` is a channel of integets with capacity of 5. It's called a buffered channel.
+Channel created with `make(chan int, 3)` is a channel of integers with capacity of 3. It's called a buffered channel.
 
 The first 3 sends will finish immediately, the 4th will block until a value is recieved from a channel.
 
