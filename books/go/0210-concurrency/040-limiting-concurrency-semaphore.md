@@ -13,7 +13,7 @@ You can enter (acquire) semaphore and leave (release) a semaphore.
 
 A semaphore has a fixed capacity. If you exceed semaphore's capacity, acquire blocks until a release operation frees it.
 
-A buferred channel is a natural semaphore.
+A buffered channel is a natural semaphore.
 
 Here's an example of using a channel acting as a semaphore to limit number of gouroutines active at any given time:
 
