@@ -20,9 +20,9 @@ In **Go**, there is 4 way to compare dates:
 <!-- break -->
 
 > TIPS: If you need to know if a date is before or equal another one, just need to combine the 4 operators
-> - `date1 == date2 && date1.After(date2)`, returns `true` when date1 is after or equal date2
+> - `date1 == date2 || date1.After(date2)`, returns `true` when date1 is after or equal date2
 >or using `! (date1.Before(date2))`
-> - `date1 == date2 && date1.Before(date2)`, returns `true` when date1 is before or equal date2
+> - `date1 == date2 || date1.Before(date2)`, returns `true` when date1 is before or equal date2
 >or using `!(date1.After(date2))`
 
 Some examples to see how to use:
