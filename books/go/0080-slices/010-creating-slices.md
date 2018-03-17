@@ -36,6 +36,6 @@ You can access elements in a slice using typical indexing syntax.
 You can also use a `for` loop over slices with `range`. The first variable is the index in the specified array, and the second variable is the value for the index.
 
     for index, value := range a {
-        fmt.Println("Index: " + index + " Value: " + value)  // Prints "Index: 0 Value: 5" (and continues until end of slice)
+        fmt.Printf("Index: %v Value: %v\n", index, value)  // Prints "Index: 0 Value: 5" (and continues until end of slice)
     }
 
