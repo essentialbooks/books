@@ -5,7 +5,7 @@ Score: 0
 SOId: 25407
 ---
 
-``go
+```go
 var memprofile = flag.String("memprofile", "", "write memory profile to `file`")
 
 func main() {
