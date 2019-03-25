@@ -9,7 +9,7 @@ function exitIfFailed { if ($LASTEXITCODE -ne 0) { exit } }
 go build -o ./gen.exe
 exitIfFailed
 
-./gen.exe -update-output -analytics UA-113489735-1 $args
+./gen.exe -analytics UA-113489735-1 $args
 exitIfFailed
 
 Remove-Item -Force -ErrorAction SilentlyContinue ./gen.exe

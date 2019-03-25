@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -8,97 +9,81 @@ import (
 	"github.com/kjk/siser"
 )
 
-// TODO: write me
+type CodeSnippetWithOutput struct {
+	// code as extracted from
+	Code       string
+	Lang       string
+	GlotOutput string
+	// id of glot.id code snippet for this code, if exists
+	GlotID string
+	// id of https://goplay.space snippet for this code, if exists
+	GoPlayID string
+
+	// calculated from Code
+	codeSha1 string
+}
+
+func (c *CodeSnippetWithOutput) Output() string {
+	// we might support output from other source in the future
+	return c.GlotOutput
+}
 
 type Cache struct {
 	path string
 
-	sha1ToGlotID   map[string]string
-	sha1ToGoPlayID map[string]string
+	sha1ToCode map[string]*CodeSnippetWithOutput
 }
 
-func (c *Cache) addGoPlaySha1ToID(sha1 string, id string) error {
-	fmt.Printf("addGoPlaySha1ToID: %s => %s\n", sha1, id)
-	// TODO: maybe silently skip?
-	v, ok := c.sha1ToGoPlayID[sha1]
-	panicIf(ok, "record already exists for sha1 '%s', value: '%s', new value: '%s'", sha1, v, id)
-	c.sha1ToGoPlayID[sha1] = id
-	r := siser.Record{
-		Keys:   []string{"sha1", "id"},
-		Values: []string{sha1, id},
-		Name:   "goplayid",
-	}
-	f := openForAppend(c.path)
-	defer f.Close()
-	w := siser.NewWriter(f)
-	w.Format = siser.FormatSizePrefix
-	_, err := w.WriteRecord(&r)
-	return err
-}
-
-func (c *Cache) addGlotSha1ToID(sha1 string, id string) error {
-	fmt.Printf("addGlotSha1ToID: %s => %s\n", sha1, id)
-	// TODO: maybe silently skip?
-	v, ok := c.sha1ToGlotID[sha1]
-	panicIf(ok, "record already exists for sha1 '%s', value: '%s', new value: '%s'", sha1, v, id)
-	c.sha1ToGlotID[sha1] = id
-	r := siser.Record{
-		Keys:   []string{"sha1", "id"},
-		Values: []string{sha1, id},
-		Name:   "glotsha1",
-	}
-	f := openForAppend(c.path)
-	defer f.Close()
-	w := siser.NewWriter(f)
-	w.Format = siser.FormatSizePrefix
-	_, err := w.WriteRecord(&r)
-	return err
+func (c *Cache) addCodeSnippet(snippet *CodeSnippetWithOutput) error {
+	// TODO: write me:
+	// - calc sha1 of Code
+	// - if doesn't exist or different than current, save to a file
+	//   changed should only happen if we expand what we do
+	//fmt.Printf("addCodeSnippet: %s => %s\n", sha1, id)
+	/*
+		r := siser.Record{
+			Keys:   []string{"sha1", "id"},
+			Values: []string{sha1, id},
+			Name:   "goplayid",
+		}
+		f := openForAppend(c.path)
+		defer f.Close()
+		w := siser.NewWriter(f)
+		_, err := w.WriteRecord(&r)
+		return err
+	*/
+	return nil
 }
 
 func loadCache(path string) *Cache {
-	fmt.Printf("loadCache: %s\n", path)
+	lg("loadCache: %s\n", path)
 	dir := filepath.Dir(path)
 	// the directory must exist
 	_, err := os.Stat(dir)
 	must(err)
 
 	cache := &Cache{
-		path:           path,
-		sha1ToGlotID:   map[string]string{},
-		sha1ToGoPlayID: map[string]string{},
+		path:       path,
+		sha1ToCode: map[string]*CodeSnippetWithOutput{},
 	}
 
 	f, err := os.Open(path)
 	if err != nil {
 		// it's ok if file doesn't exist
-		fmt.Printf("Cache file %s doesn't exist\n", path)
+		lg("Cache file %s doesn't exist\n", path)
 		return cache
 	}
 	defer f.Close()
 
-	r := siser.NewReader(f)
-	r.Format = siser.FormatSizePrefix
-	for r.ReadNext() {
-		_, rec := r.Record()
-		if rec.Name == "glotsha1" {
-			sha1, ok := rec.Get("sha1")
-			panicIf(!ok, "didn't find 'sha1' key in record named '%s'", rec.Name)
-			id, ok := rec.Get("id")
-			panicIf(!ok, "didn't find 'id' key in record named '%s'", rec.Name)
-			cache.sha1ToGlotID[sha1] = id
-			//fmt.Printf("glot %s => %s\n", sha1, id)
-		} else if rec.Name == "goplayid" {
-			sha1, ok := rec.Get("sha1")
-			panicIf(!ok, "didn't find 'sha1' key in record named '%s'", rec.Name)
-			id, ok := rec.Get("id")
-			panicIf(!ok, "didn't find 'id' key in record named '%s'", rec.Name)
-			cache.sha1ToGoPlayID[sha1] = id
-			//fmt.Printf("goplay %s => %s\n", sha1, id)
+	r := siser.NewReader(bufio.NewReader(f))
+	for r.ReadNextRecord() {
+		rec := r.Record
+		if rec.Name == "code" {
+			panic("NYI")
 		} else {
 			panic(fmt.Errorf("unknown record: '%s'", rec.Name))
 		}
 	}
 	must(r.Err())
-	fmt.Printf("loadCache: len(cache.sha1ToGlotID): %d, len(cache.sha1ToGoPlayID): %d\n", len(cache.sha1ToGlotID), len(cache.sha1ToGoPlayID))
 	return cache
 }

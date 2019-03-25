@@ -32,12 +32,12 @@ func loadSoContributorsMust(book *Book) {
 	// it's ok if the file doesn't exist
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
-		fmt.Printf("No contributors for book %s\n", book.Title)
+		lg("No contributors for book %s\n", book.Title)
 		book.SoContributors = []SoContributor{}
 		return
 	}
 
-	fmt.Printf("loadSoContributorsMust: book.Dir: %s, path: %s\n", book.Dir, path)
+	lg("loadSoContributorsMust: book.Dir: %s, path: %s\n", book.Dir, path)
 	lines, err := common.ReadFileAsLines(path)
 	panicIfErr(err)
 	var contributors []SoContributor

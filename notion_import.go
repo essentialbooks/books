@@ -141,9 +141,11 @@ func downloadAndCachePage(c *notionapi.Client, b *Book, pageID string) (*notiona
 
 var (
 	nNotionPagesFromCache int
+	nDownloadedPage       int
 )
 
-func loadNotionPage(c *notionapi.Client, b *Book, pageID string, getFromCache bool, n int) (*notionapi.Page, error) {
+func loadNotionPage(c *notionapi.Client, b *Book, pageID string) (*notionapi.Page, error) {
+	n := nDownloadedPage
 	if b.isCachedPageNotOutdated[pageID] {
 		page := b.cachedPagesFromDisk[pageID]
 		nTotalFromCache++
@@ -151,7 +153,7 @@ func loadNotionPage(c *notionapi.Client, b *Book, pageID string, getFromCache bo
 		return page, nil
 	}
 
-	if getFromCache {
+	if !flgDisableNotionCache {
 		page := loadPageFromCache(b.NotionCacheDir(), pageID)
 		if page != nil {
 			nNotionPagesFromCache++
@@ -328,12 +330,12 @@ func checkIfPagesAreOutdated(c *notionapi.Client, cachedPagesFromDisk map[string
 	return isCachedPageNotOutdated
 }
 
-func loadNotionPages(c *notionapi.Client, b *Book, indexPageID string, idToPage map[string]*notionapi.Page, useCache bool) {
+func loadNotionPages(c *notionapi.Client, b *Book, indexPageID string, idToPage map[string]*notionapi.Page) {
 	b.cachedPagesFromDisk = loadPagesFromDisk(b.NotionCacheDir())
 	b.isCachedPageNotOutdated = checkIfPagesAreOutdated(c, b.cachedPagesFromDisk)
 	toVisit := []string{indexPageID}
 
-	n := 1
+	nDownloadedPage := 1
 	for len(toVisit) > 0 {
 		pageID := normalizeID(toVisit[0])
 		toVisit = toVisit[1:]
@@ -342,10 +344,10 @@ func loadNotionPages(c *notionapi.Client, b *Book, indexPageID string, idToPage 
 			continue
 		}
 
-		page, err := loadNotionPage(c, b, pageID, useCache, n)
+		page, err := loadNotionPage(c, b, pageID)
 		panicIfErr(err)
 
-		n++
+		nDownloadedPage++
 		idToPage[pageID] = page
 
 		subPages := findSubPageIDs(page.Root.Content)

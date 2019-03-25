@@ -1,6 +1,6 @@
 #!/bin/bash
 set -u -e -o pipefail
-find cmd pkg -name "*.go" | xargs wc -l
+find . -name "*.go" | xargs wc -l
 echo ""
 wc -l "tmpl/app.js"
 echo ""

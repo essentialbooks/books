@@ -38,9 +38,7 @@ type Book struct {
 	CoverImageName string
 
 	// cache related
-	cachedOutputFiles      []*cachedOutputFile
-	sha1ToCachedOutputFile map[string]*cachedOutputFile
-	cache                  *Cache
+	cache *Cache
 
 	// pages loaded from cache/${book}/notion/${pageid}.json
 	cachedPagesFromDisk map[string]*notionapi.Page
@@ -190,7 +188,7 @@ func updateBookAppJS(book *Book) {
 		d2, err := minifier.Bytes("text/javascript", d)
 		maybePanicIfErr(err)
 		if err == nil {
-			fmt.Printf("Minified %s from %d => %d (saved %d)\n", srcName, len(d), len(d2), len(d)-len(d2))
+			lg("Minified %s from %d => %d (saved %d)\n", srcName, len(d), len(d2), len(d)-len(d2))
 			d = d2
 		}
 	}
@@ -205,5 +203,5 @@ func updateBookAppJS(book *Book) {
 		return
 	}
 	book.AppJSURL = "/s/" + name
-	fmt.Printf("Created %s\n", dst)
+	lg("Created %s\n", dst)
 }

@@ -44,20 +44,24 @@ func testGetGoPlaygroundShareIDAndExit() {
 
 // GetGoPlaygroundID gets go playground id from content
 func GetGoPlaygroundID(c *Cache, d []byte) (string, bool, error) {
-	sha1 := u.Sha1HexOfBytes(d)
-	id, ok := c.sha1ToGoPlayID[sha1]
-	if ok {
-		return id, true, nil
-	}
-	id, err := getGoPlaygroundShareID(d)
-	if err != nil {
-		return "", false, err
-	}
-	err = c.addGoPlaySha1ToID(sha1, id)
-	if err != nil {
-		return "", false, err
-	}
-	return id, false, nil
+	panic("NYI")
+	return "", false, nil
+	/*
+		sha1 := u.Sha1HexOfBytes(d)
+		id, ok := c.sha1ToGoPlayID[sha1]
+		if ok {
+			return id, true, nil
+		}
+		id, err := getGoPlaygroundShareID(d)
+		if err != nil {
+			return "", false, err
+		}
+		err = c.addGoPlaySha1ToID(sha1, id)
+		if err != nil {
+			return "", false, err
+		}
+		return id, false, nil
+	*/
 }
 
 func getSha1ToGoPlaygroundIDCached(b *Book, d []byte) (string, error) {

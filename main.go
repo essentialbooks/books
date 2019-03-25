@@ -25,15 +25,11 @@ var (
 	flgAnalytics string
 	flgPreview   bool
 	flgAllBooks  bool
-	flgNoCache   bool
+	// if true, disables notion cache, forcing re-download of notion page
+	// even if cached verison on disk exits
+	flgDisableNotionCache bool
 	// url or id of the page to rebuild
-	flgRebuildOnePage      string
-	flgUpdateOutput        bool
-	flgRedownloadReplit    bool
-	flgRedownloadOne       string
-	flgRedownloadBook      string
-	flgRedownloadOneReplit string
-	flgVerbose             bool
+	flgNoUpdateOutput bool
 
 	gShowForum = true
 	//gForumLink = "https://spectrum.chat/programming-books"
@@ -96,22 +92,9 @@ func parseFlags() {
 	flag.StringVar(&flgAnalytics, "analytics", "", "google analytics code")
 	flag.BoolVar(&flgPreview, "preview", false, "if true will start watching for file changes and re-build everything")
 	flag.BoolVar(&flgAllBooks, "all-books", false, "if true will do all books")
-	flag.BoolVar(&flgUpdateOutput, "update-output", false, "if true, will update ouput files in cache")
-	flag.BoolVar(&flgNoCache, "no-cache", false, "if true, disables cache for notion")
-	flag.BoolVar(&flgVerbose, "verbose", false, "if true will log more")
-	flag.StringVar(&flgRedownloadOne, "redownload-one", "", "notion id of a page to re-download")
-	flag.StringVar(&flgRebuildOnePage, "rebuild-one", "", "notion id of a page to re-build")
-	flag.BoolVar(&flgRedownloadReplit, "redownload-replit", false, "if true, redownloads replits")
-	flag.StringVar(&flgRedownloadOneReplit, "redownload-one-replit", "", "replit url and book to download")
-	flag.StringVar(&flgRedownloadBook, "redownload-book", "", "redownload a book")
+	flag.BoolVar(&flgNoUpdateOutput, "no-update-output", false, "if true, will disable updating ouput files in cache")
+	flag.BoolVar(&flgDisableNotionCache, "no-cache", false, "if true, disables cache for notion")
 	flag.Parse()
-
-	if flgRedownloadOne != "" {
-		flgRedownloadOne = extractNotionIDFromURL(flgRedownloadOne)
-	}
-	if flgRebuildOnePage != "" {
-		flgRebuildOnePage = extractNotionIDFromURL(flgRebuildOnePage)
-	}
 
 	if flgAnalytics != "" {
 		googleAnalyticsTmpl := `<script async src="https://www.googletagmanager.com/gtag/js?id=%s"></script>
@@ -137,7 +120,7 @@ func parseFlags() {
 func downloadBook(c *notionapi.Client, book *Book) {
 	notionStartPageID := book.NotionStartPageID
 	fmt.Printf("Loading %s...", book.Title)
-	loadNotionPages(c, book, notionStartPageID, book.pageIDToPage, !flgNoCache)
+	loadNotionPages(c, book, notionStartPageID, book.pageIDToPage)
 	fmt.Printf(" got %d pages\n", len(book.pageIDToPage))
 	bookFromPages(book)
 }
@@ -146,28 +129,6 @@ func loadSOUserMappingsMust() {
 	path := filepath.Join("stack-overflow-docs-dump", "users.json.gz")
 	err := common.JSONDecodeGzipped(path, &soUserIDToNameMap)
 	u.PanicIfErr(err)
-}
-
-// TODO: probably more
-func getDefaultLangForBook(bookName string) string {
-	s := strings.ToLower(bookName)
-	switch s {
-	case "go":
-		return "go"
-	case "android":
-		return "java"
-	case "ios":
-		return "ObjectiveC"
-	case "microsoft sql server":
-		return "sql"
-	case "node.js":
-		return "javascript"
-	case "mysql":
-		return "sql"
-	case ".net framework":
-		return "c#"
-	}
-	return s
 }
 
 func shouldCopyImage(path string) bool {
@@ -314,9 +275,10 @@ func initBook(book *Book) {
 		os.Exit(0)
 	}
 
-	reloadCachedOutputFilesMust(book)
+	book.cachedPagesFromDisk = map[string]*notionapi.Page{}
+	book.pageIDToPage = map[string]*notionapi.Page{}
 	book.cache = loadCache(book.CachePath())
-	panicIfErr(err)
+	must(err)
 }
 
 func findBook(id string) *Book {
@@ -332,55 +294,30 @@ func findBook(id string) *Book {
 	return nil
 }
 
-func redownloadBook(id string) {
-	book := findBook(id)
-	if book == nil {
-		fmt.Printf("Didn't find a book with id '%s'\n", id)
-		os.Exit(1)
-	}
-	flgNoCache = true
-	client := &notionapi.Client{
-		AuthToken: notionAuthToken,
-	}
-	initBook(book)
-	downloadBook(client, book)
-}
-
-func main() {
-	for _, b := range allBooks {
-		b.cachedPagesFromDisk = map[string]*notionapi.Page{}
-		b.pageIDToPage = map[string]*notionapi.Page{}
-	}
-
+func adHoc() {
 	if false {
 		glotRunTestAndExit()
 	}
 	if false {
 		glotGetSnippedIDTestAndExit()
 	}
-
-	parseFlags()
-
-	/*
-		if flgRedownloadOneReplit != "" {
-			redownloadOneReplit()
-			os.Exit(0)
-		}
-	*/
-
 	if false {
 		// only needs to be run when we add new covers
 		genTwitterImagesAndExit()
 	}
+}
+
+func main() {
+	openLog()
+	defer closeLog()
+
+	parseFlags()
+
+	adHoc()
 
 	os.RemoveAll("www")
 	createDirMust(filepath.Join("www", "s"))
 	createDirMust("log")
-
-	if flgRedownloadBook != "" {
-		redownloadBook(flgRedownloadBook)
-		return
-	}
 
 	initMinify()
 	loadSOUserMappingsMust()
@@ -389,63 +326,24 @@ func main() {
 		AuthToken: notionAuthToken,
 	}
 
-	if flgRebuildOnePage != "" {
-		book := findBookFromCachedPageID(flgRebuildOnePage)
-		if book == nil {
-			fmt.Printf("didn't find book for id %s\n", flgRebuildOnePage)
-			os.Exit(1)
-		}
-		fmt.Printf("Rebuilding %s for book %s\n", flgRebuildOnePage, book.Dir)
-		page := loadPageFromCache(book.NotionCacheDir(), flgRebuildOnePage)
-		flgNoCache = false
-		initBook(book)
-		downloadBook(client, book)
-		loadSoContributorsMust(book)
-		genOnePage(book, page.ID)
-		os.Exit(0)
-	}
-
 	books := booksMain
 	if flgAllBooks {
 		books = allBooks
-	}
-
-	if flgRedownloadOne != "" {
-		book := findBookFromCachedPageID(flgRedownloadOne)
-		if book == nil {
-			fmt.Printf("didn't find book for id %s\n", flgRedownloadOne)
-			os.Exit(1)
-		}
-		fmt.Printf("Downloading %s for book %s\n", flgRedownloadOne, book.Dir)
-		// download a single page from notion and re-generate content
-		page, err := downloadAndCachePage(client, book, flgRedownloadOne)
-		if err != nil {
-			fmt.Printf("downloadAndCachePage of '%s' failed with %s\n", flgRedownloadOne, err)
-			os.Exit(1)
-		}
-		flgNoCache = false
-		initBook(book)
-		downloadBook(client, book)
-		loadSoContributorsMust(book)
-		genOnePage(book, page.ID)
-		flgPreview = true
-		books = []*Book{book}
-		// and fallthrough to re-generate books
-	}
-
-	if flgPreview {
+		lg("Downloading all books\n")
+	} else {
 		if len(flag.Args()) > 0 {
 			var newBooks []*Book
 			for _, name := range flag.Args() {
 				book := findBook(name)
 				if book == nil {
-					fmt.Printf("Didn't find book named '%s'\n", name)
+					lg("Didn't find book named '%s'\n", name)
 					continue
 				}
 				newBooks = append(newBooks, book)
 			}
 			if len(newBooks) > 0 {
 				books = newBooks
+				lg("Downloading %d books %#v\n", len(books), books)
 			}
 		}
 	}
@@ -461,7 +359,7 @@ func main() {
 	genNetlifyRedirects(books)
 	printAndClearErrors()
 
-	fmt.Printf("Downloaded %d pages, got %d from cache\n", nTotalDownloaded, nTotalFromCache)
+	lg("Downloaded %d pages, got %d from cache\n", nTotalDownloaded, nTotalFromCache)
 	if flgPreview {
 		startPreview()
 	}

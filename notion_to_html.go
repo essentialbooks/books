@@ -277,52 +277,7 @@ func (g *HTMLGenerator) genReplitEmbed(block *notionapi.Block) {
 	fmt.Printf("Page: https://notion.so/%s\n", g.page.NotionID)
 	fmt.Printf("  Replit: %s\n", uri)
 	panic("we no longer use replit")
-
-	/*
-		replit := g.book.replitCache.replits[uri]
-		if replit == nil || flgRedownloadReplit {
-			var isNew bool
-			var err error
-			replit, isNew, err = downloadAndCacheReplit(g.book.replitCache, uri)
-			panicIfErr(err)
-			fmt.Printf("genReplitEmbed: downloaded %s,  isNew: %v\n", uri+".zip", isNew)
-		}
-		f, err := getSourceFileFromReplit(g.book, replit)
-		if err != nil {
-			file := replit.files[0]
-			fmt.Printf("genReplitEmbed: getSourceFileFromReplit (name: '%s', uri: '%s') failed with '%s'\n", file.name, uri, err)
-			fmt.Printf("file '%s':\n%s\n", file.name, file.data)
-			panicIfErr(err)
-		}
-		f.EmbedURL = uri
-		f.PlaygroundURI = uri
-		g.genSourceFile(f)
-	*/
 }
-
-/*
-func pickReplitFile(files []*ReplitFile) *ReplitFile {
-	if len(files) == 1 {
-		return files[0]
-	}
-	// TODO: ad-hoc heuristics
-	for _, rf := range files {
-		if strings.HasSuffix(rf.name, ".go") {
-			return rf
-		}
-	}
-	return files[0]
-}
-
-func getSourceFileFromReplit(b *Book, replit *Replit) (*SourceFile, error) {
-	f := &SourceFile{}
-	rf := pickReplitFile(replit.files)
-	f.Lang = getLangFromFileExt(rf.name)
-	err := setSourceFileData(f, []byte(rf.data))
-	err = getOutputCachedForReplit(b, replit, f)
-	return f, err
-}
-*/
 
 func (g *HTMLGenerator) genSourceFile(f *SourceFile) {
 	{
@@ -757,17 +712,11 @@ func notionToHTML(page *Page, book *Book) []byte {
 		return []byte(page.BodyHTML)
 	}
 
-	dbg("Generating HTML for %s\n", page.NotionURL())
+	verbose("Generating HTML for %s\n", page.NotionURL())
 	gen := HTMLGenerator{
 		f:    &bytes.Buffer{},
 		book: book,
 		page: page,
 	}
 	return gen.Gen()
-}
-
-func dbg(format string, args ...interface{}) {
-	if flgVerbose {
-		fmt.Printf(format, args...)
-	}
 }
