@@ -28,8 +28,10 @@ type MetaValue struct {
 
 // Page represents a single page in a book
 type Page struct {
-	NotionPage *notionapi.Page
-	Title      string
+	NotionPage     *notionapi.Page
+	IsPageOutdated bool
+
+	Title string
 	// reference to parent page, nil if top-level page
 	Parent *Page
 
@@ -196,7 +198,7 @@ func findSourceFileForEmbedURL(page *Page, uri string) *SourceFile {
 
 // extract sub page information and removes blocks that contain
 // this info
-func getSubPages(page *notionapi.Page, pageIDToPage map[string]*notionapi.Page) []*notionapi.Page {
+func getSubPages(page *notionapi.Page, pageIDToPage map[string]*Page) []*notionapi.Page {
 	var res []*notionapi.Page
 	toRemove := map[int]bool{}
 	for idx, block := range page.Root.Content {
@@ -207,7 +209,7 @@ func getSubPages(page *notionapi.Page, pageIDToPage map[string]*notionapi.Page) 
 		id := normalizeID(block.ID)
 		subPage := pageIDToPage[id]
 		panicIf(subPage == nil, "no sub page for id %s", id)
-		res = append(res, subPage)
+		res = append(res, subPage.NotionPage)
 	}
 	removeBlocks(page, toRemove)
 	return res
@@ -309,13 +311,22 @@ func extractMeta(p *Page) {
 // recursively build a Page for each notionapi.Page by extracting
 // information from notionapi.Page
 func bookPageFromNotionPage(book *Book, page *notionapi.Page) *Page {
-	res := &Page{}
+	id := normalizeID(page.ID)
+	res := book.idToPage[id]
+	if res == nil {
+		res = &Page{
+			NotionPage: page,
+		}
+		book.idToPage[id] = res
+	}
 	res.NotionPage = page
-	res.NotionID = normalizeID(page.ID)
+	res.NotionID = id
 	res.Title = cleanTitle(page.Root.Title)
+
 	extractMeta(res)
 	extractSourceFiles(book, res)
-	subPages := getSubPages(page, book.pageIDToPage)
+
+	subPages := getSubPages(page, book.idToPage)
 
 	// fmt.Printf("bookPageFromNotionPage: %s %s\n", normalizeID(page.ID), res.Meta.ID)
 
@@ -333,7 +344,7 @@ func bookPageFromNotionPage(book *Book, page *notionapi.Page) *Page {
 
 func bookFromPages(book *Book) {
 	startPageID := book.NotionStartPageID
-	page := book.pageIDToPage[startPageID]
+	page := book.idToPage[startPageID].NotionPage
 	panicIf(page.Root.Type != notionapi.BlockPage, "start block is of type '%s' and not '%s'", page.Root.Type, notionapi.BlockPage)
 	book.TitleLong = page.Root.Title
 	book.RootPage = bookPageFromNotionPage(book, page)

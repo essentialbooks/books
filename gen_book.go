@@ -251,7 +251,6 @@ func genChapter(book *Book, page *Page, currNo int) {
 }
 
 func buildIDToPage(book *Book) {
-	book.idToPage = map[string]*Page{}
 	pages := book.GetAllPages()
 	for _, page := range pages {
 		id := normalizeID(page.NotionPage.ID)
@@ -284,58 +283,8 @@ func bookPageToHTML(book *Book, id string) {
 	fmt.Printf("bookPageToHTML: didn't find page '%s' for book %s\n", id, book.TitleLong)
 }
 
-func genOnePage(book *Book, id string) {
-	fmt.Printf("genOnePage(): id %s\n", id)
-	id = normalizeID(id)
-
-	err := os.MkdirAll(book.destDir(), 0755)
-	panicIfErr(err)
-
-	buildIDToPage(book)
-	genContributorsPage(book)
-
-	bookPageToHTML(book, id)
-
-	for currNo, page := range book.Chapters() {
-		if normalizeID(page.NotionID) == id {
-			fmt.Printf("genOnePage(): re-generated chapter %s %s\n", page.NotionID, page.Title)
-			path := page.destFilePath()
-			d := struct {
-				PageCommon
-				*Page
-				CurrentChapterNo int
-				ShowForum        bool
-				ForumLink        string
-			}{
-				PageCommon:       getPageCommon(),
-				Page:             page,
-				CurrentChapterNo: currNo,
-				ShowForum:        gShowForum,
-				ForumLink:        gForumLink,
-			}
-			execTemplateToFileSilentMaybeMust("chapter.tmpl.html", d, path)
-
-			for _, imagePath := range page.images {
-				imageName := filepath.Base(imagePath)
-				dst := page.destImagePath(imageName)
-				copyFileMaybeMust(dst, imagePath)
-			}
-			return
-		}
-
-		for j, article := range page.Pages {
-			if normalizeID(article.NotionID) == id {
-				genArticle(book, article, currNo, j)
-				fmt.Printf("genOnePage(): re-generated article %s %s\n", article.NotionID, article.Title)
-				return
-			}
-		}
-	}
-	fmt.Printf("genOnePage(): didn't find chapter or article with id %s\n", id)
-}
-
 func genBook(book *Book) {
-	fmt.Printf("Started genering book %s\n", book.Title)
+	lg("Started genering book %s\n", book.Title)
 	timeStart := time.Now()
 
 	buildIDToPage(book)

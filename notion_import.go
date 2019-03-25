@@ -111,7 +111,7 @@ func downloadPageRetry(c *notionapi.Client, pageID string) (res *notionapi.Page,
 }
 
 func downloadAndCachePage(c *notionapi.Client, b *Book, pageID string) (*notionapi.Page, error) {
-	//fmt.Printf("downloading page with id %s\n", pageID)
+	lg("downloading page with id %s\n", pageID)
 	pageID = normalizeID(pageID)
 	c.Logger, _ = openLogFileForPageID(pageID)
 	if c.Logger != nil {
@@ -144,47 +144,36 @@ var (
 	nDownloadedPage       int
 )
 
-func loadNotionPage(c *notionapi.Client, b *Book, pageID string) (*notionapi.Page, error) {
+func loadNotionPage(c *notionapi.Client, b *Book, pageID string) error {
 	n := nDownloadedPage
-	if b.isCachedPageNotOutdated[pageID] {
-		page := b.cachedPagesFromDisk[pageID]
+	nDownloadedPage++
+	page := b.idToPage[pageID]
+	if page != nil && !page.IsPageOutdated {
 		nTotalFromCache++
-		verbose("Skipping %d %s %s (cached is current)\n", n, page.ID, page.Root.Title)
-		return page, nil
+		verbose("Skipping %d %s %s (cached is current)\n", n, page.NotionPage.ID, page.NotionPage.Root.Title)
+		return nil
 	}
-
-	if !flgDisableNotionCache {
-		page := loadPageFromCache(b.NotionCacheDir(), pageID)
-		if page != nil {
-			nNotionPagesFromCache++
-			//fmt.Printf("Got %d from cache %s %s\n", n, pageID, page.Root.Title)
-			return page, nil
-		}
+	if flgNoDownload {
+		lg("Not re-downloading %d %s because flgNoDownload is true\n", n, pageID)
+		return nil
 	}
 
 	nTotalDownloaded++
-	page, err := downloadAndCachePage(c, b, pageID)
-	if err == nil {
-		fmt.Printf("Downloaded %d %s %s\n", n, page.ID, page.Root.Title)
-	} else {
-		return nil, err
+	lg("Downloading page %s\n", pageID)
+	notionPage, err := downloadAndCachePage(c, b, pageID)
+	if err != nil {
+		lg("downloadAndCachePage %d %s failed with '%s'\n", n, pageID, err)
+		must(err)
+		return err
 	}
 
-	//updated := updateFormatOrTitleIfNeeded(page)
-	updated := false
-	if !updated {
-		return page, nil
+	lg("Downloaded %d %s %s\n", n, notionPage.ID, notionPage.Root.Title)
+	if page == nil {
+		page = &Page{}
+		b.idToPage[pageID] = page
 	}
-
-	time.Sleep(time.Millisecond * 100)
-	page, err = downloadAndCachePage(c, b, pageID)
-	if err == nil {
-		fmt.Printf("Downloaded %d %s %s\n", n, page.ID, page.Root.Title)
-	} else {
-		return nil, err
-	}
-
-	return page, nil
+	page.NotionPage = notionPage
+	return nil
 }
 
 func updateFormatIfNeeded(page *notionapi.Page) bool {
@@ -246,12 +235,12 @@ func pageIDFromFileName(name string) string {
 	return ""
 }
 
-func loadPagesFromDisk(dir string) map[string]*notionapi.Page {
-	cachedPagesFromDisk := map[string]*notionapi.Page{}
+func loadPagesFromDisk(dir string) []*notionapi.Page {
+	var pages []*notionapi.Page
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
-		fmt.Printf("loadPagesFromDisk: os.ReadDir('%s') failed with '%s'\n", dir, err)
-		return cachedPagesFromDisk
+		lg("loadPagesFromDisk: os.ReadDir('%s') failed with '%s'\n", dir, err)
+		return pages
 	}
 	for _, f := range files {
 		pageID := pageIDFromFileName(f.Name())
@@ -259,10 +248,10 @@ func loadPagesFromDisk(dir string) map[string]*notionapi.Page {
 			continue
 		}
 		page := loadPageFromCache(dir, pageID)
-		cachedPagesFromDisk[pageID] = page
+		pages = append(pages, page)
 	}
-	fmt.Printf("loadPagesFromDisk: loaded %d cached pages from %s\n", len(cachedPagesFromDisk), dir)
-	return cachedPagesFromDisk
+	lg("loadPagesFromDisk: loaded %d cached pages from %s\n", len(pages), dir)
+	return pages
 }
 
 func isIDEqual(id1, id2 string) bool {
@@ -293,10 +282,9 @@ func getVersionsForPages(c *notionapi.Client, ids []string) ([]int64, error) {
 	return versions, nil
 }
 
-func checkIfPagesAreOutdated(c *notionapi.Client, cachedPagesFromDisk map[string]*notionapi.Page) map[string]bool {
-	isCachedPageNotOutdated := map[string]bool{}
+func checkIfPagesAreOutdated(c *notionapi.Client, pages map[string]*Page) {
 	var ids []string
-	for id := range cachedPagesFromDisk {
+	for id := range pages {
 		ids = append(ids, id)
 	}
 	sort.Strings(ids)
@@ -316,67 +304,47 @@ func checkIfPagesAreOutdated(c *notionapi.Client, cachedPagesFromDisk map[string
 		versions = append(versions, tmpVers...)
 	}
 	panicIf(len(ids) != len(versions))
+
 	nOutdated := 0
 	for i, ver := range versions {
 		id := ids[i]
-		page := cachedPagesFromDisk[id]
-		isOutdated := ver > page.Root.Version
-		isCachedPageNotOutdated[id] = !isOutdated
-		if isOutdated {
+		page := pages[id]
+		page.IsPageOutdated = ver > page.NotionPage.Root.Version
+		if page.IsPageOutdated {
+			fmt.Printf("page https://notion.so/%s %s outdated\n", id, page.NotionPage.Root.Title)
 			nOutdated++
 		}
 	}
 	lg("%d pages, %d outdated\n", len(ids), nOutdated)
-	return isCachedPageNotOutdated
 }
 
-func loadNotionPages(c *notionapi.Client, b *Book, indexPageID string, idToPage map[string]*notionapi.Page) {
-	b.cachedPagesFromDisk = loadPagesFromDisk(b.NotionCacheDir())
-	b.isCachedPageNotOutdated = checkIfPagesAreOutdated(c, b.cachedPagesFromDisk)
-	toVisit := []string{indexPageID}
+func loadNotionPages(c *notionapi.Client, b *Book) {
+	toVisit := []string{b.NotionStartPageID}
 
 	nDownloadedPage = 1
 	for len(toVisit) > 0 {
 		pageID := normalizeID(toVisit[0])
 		toVisit = toVisit[1:]
 
-		if _, ok := idToPage[pageID]; ok {
-			continue
-		}
+		/*
+			if _, ok := b.idToPage[pageID]; ok {
+				continue
+			}
+		*/
 
-		page, err := loadNotionPage(c, b, pageID)
+		err := loadNotionPage(c, b, pageID)
 		panicIfErr(err)
-
-		nDownloadedPage++
-		idToPage[pageID] = page
-
-		subPages := findSubPageIDs(page.Root.Content)
+		page := b.idToPage[pageID]
+		subPages := findSubPageIDs(page.NotionPage.Root.Content)
 		toVisit = append(toVisit, subPages...)
 	}
 }
 
-func rmFile(path string) {
-	err := os.Remove(path)
-	if err != nil {
-		fmt.Printf("os.Remove(%s) failed with %s\n", path, err)
-	}
-}
-
-func rmCached(b *Book, pageID string) {
-	id := normalizeID(pageID)
-	rmFile(filepath.Join(notionLogDir, id+".go.log.txt"))
-	rmFile(filepath.Join(b.NotionCacheDir(), id+".json"))
-}
-
-func createNotionLogDir() {
+func createNotionDirs() {
 	if logNotionRequests {
 		err := os.MkdirAll(notionLogDir, 0755)
 		panicIfErr(err)
 	}
-}
-
-func createNotionDirs() {
-	createNotionLogDir()
 }
 
 func removeCachedNotion() {

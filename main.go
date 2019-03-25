@@ -25,6 +25,8 @@ var (
 	flgAnalytics string
 	flgPreview   bool
 	flgAllBooks  bool
+	// if true, disables downloading pages
+	flgNoDownload bool
 	// if true, disables notion cache, forcing re-download of notion page
 	// even if cached verison on disk exits
 	flgDisableNotionCache bool
@@ -94,6 +96,7 @@ func parseFlags() {
 	flag.BoolVar(&flgAllBooks, "all-books", false, "if true will do all books")
 	flag.BoolVar(&flgNoUpdateOutput, "no-update-output", false, "if true, will disable updating ouput files in cache")
 	flag.BoolVar(&flgDisableNotionCache, "no-cache", false, "if true, disables cache for notion")
+	flag.BoolVar(&flgNoDownload, "no-download", false, "if true, will not download pages from notion")
 	flag.Parse()
 
 	if flgAnalytics != "" {
@@ -118,10 +121,21 @@ func parseFlags() {
 }
 
 func downloadBook(c *notionapi.Client, book *Book) {
-	notionStartPageID := book.NotionStartPageID
 	lg("Loading %s...", book.Title)
-	loadNotionPages(c, book, notionStartPageID, book.pageIDToPage)
-	lg("Got %d pages for %s\n", len(book.pageIDToPage), book.Title)
+	pages := loadPagesFromDisk(book.NotionCacheDir())
+	for _, notionPage := range pages {
+		id := normalizeID(notionPage.ID)
+		page := book.idToPage[id]
+		if page == nil {
+			page = &Page{
+				NotionPage: notionPage,
+			}
+			book.idToPage[id] = page
+		}
+	}
+	checkIfPagesAreOutdated(c, book.idToPage)
+	loadNotionPages(c, book)
+	lg("Got %d pages for %s\n", len(book.idToPage), book.Title)
 	bookFromPages(book)
 }
 
@@ -275,8 +289,7 @@ func initBook(book *Book) {
 		os.Exit(0)
 	}
 
-	book.cachedPagesFromDisk = map[string]*notionapi.Page{}
-	book.pageIDToPage = map[string]*notionapi.Page{}
+	book.idToPage = map[string]*Page{}
 	book.cache = loadCache(book.CachePath())
 	must(err)
 }

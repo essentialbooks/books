@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/kjk/notionapi"
 	"github.com/kjk/u"
 )
 
@@ -16,7 +15,6 @@ type Book struct {
 	TitleLong string // "Essential Go", "Essential jQuery" etc.
 
 	NotionStartPageID string
-	pageIDToPage      map[string]*notionapi.Page
 	RootPage          *Page   // a tree of pages
 	cachedPages       []*Page // pages flattened into an array
 
@@ -39,12 +37,6 @@ type Book struct {
 
 	// cache related
 	cache *Cache
-
-	// pages loaded from cache/${book}/notion/${pageid}.json
-	cachedPagesFromDisk map[string]*notionapi.Page
-	// if true, page loaded from disk is outdated because
-	// version is older than the version we got from the server
-	isCachedPageNotOutdated map[string]bool
 
 	// for concurrency
 	sem chan bool
