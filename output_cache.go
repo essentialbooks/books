@@ -93,10 +93,10 @@ func getOutputCached(b *Book, sf *SourceFile) error {
 	code := sf.DataToRun()
 	sha1Hex := u.Sha1HexOfBytes(code)
 
-	cof := b.cache.sha1ToCode[sha1Hex]
-	if cof != nil {
+	codeInfo := b.cache.sha1ToCode[sha1Hex]
+	if codeInfo != nil {
 		// is guaranteed to exist
-		sf.Output = cof.Output()
+		sf.Output = codeInfo.Output()
 		return nil
 	}
 	if flgNoUpdateOutput {
@@ -109,7 +109,7 @@ func getOutputCached(b *Book, sf *SourceFile) error {
 			Content: string(code),
 		}
 		if sf.Directive.RunCmd != "" {
-			fmt.Printf("  run command: %s\n", sf.Directive.RunCmd)
+			lg("  run command: %s\n", sf.Directive.RunCmd)
 		}
 		req := &glotRunRequest{
 			Command:  sf.Directive.RunCmd,
@@ -125,14 +125,14 @@ func getOutputCached(b *Book, sf *SourceFile) error {
 				return errors.New(rsp.Stderr)
 			}
 		} else if rsp.Stderr != "" {
-			fmt.Printf("getOutputCached: got stderr: %s\n", rsp.Stderr)
+			lg("getOutputCached: got stderr: %s\n", rsp.Stderr)
 			if !sf.Directive.AllowError {
 				//fmt.Printf("getOutput('%s'), output is:\n%s\n", path, s)
 				return errors.New(rsp.Stderr)
 			}
 		}
 		sf.Output = s
-		fmt.Printf("Got glot output (%d bytes) for %s from %s\n", len(sf.Output), sf.SnippetName, sf.NotionOriginURL)
+		lg("Got glot output (%d bytes) for %s from %s\n", len(sf.Output), sf.SnippetName, sf.NotionOriginURL)
 	} else {
 		path := sf.Path
 		ext := strings.ToLower(filepath.Ext(path))
@@ -145,7 +145,7 @@ func getOutputCached(b *Book, sf *SourceFile) error {
 		s, err := getOutput(path, sf.Directive.RunCmd)
 		if err != nil {
 			if !sf.Directive.AllowError {
-				fmt.Printf("getOutput('%s'), got error:\n%s\n", path, s)
+				lg("getOutput('%s'), got error:\n%s\n", path, s)
 				return err
 			}
 			err = nil
@@ -154,13 +154,18 @@ func getOutputCached(b *Book, sf *SourceFile) error {
 		fmt.Printf("Got output (%d bytes) for '%s' by running locally\n", len(sf.Output), path)
 	}
 
-	panic("NYI")
-	/*
-		cof = getCurrentOutputCacheFile(b)
-		cof.doc = kvstore.ReplaceOrAppend(cof.doc, sha1Hex, sf.Output)
+	err := setGlotPlaygroundID(b, sf)
+	must(err, "setGlotPlaygroundID() failed with '%s'\n", err)
 
-		b.sha1ToCachedOutputFile[sha1Hex] = cof
-		saveCachedOutputFiles(b)
-	*/
+	codeInfo = &CodeInfo{
+		CodeFull:   string(sf.CodeFull),
+		CodeRun:    sf.CodeToRun,
+		GlotID:     sf.GlotPlaygroundID,
+		Lang:       sf.Lang,
+		GlotOutput: string(sf.Output),
+		GoPlayID:   sf.GoPlaygroundID,
+	}
+
+	b.cache.saveCodeInfo(codeInfo)
 	return nil
 }

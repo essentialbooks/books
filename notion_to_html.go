@@ -569,10 +569,6 @@ func (g *HTMLGenerator) genBlock(block *notionapi.Block) {
 			lg("getOutputCached() failed.\nsf.DataToRun():\n%s\n", sf.DataToRun())
 			panicIfErr(err)
 		}
-		err = setGlotPlaygroundID(g.book, sf)
-		if err != nil {
-			lg("setGlotPlaygroundID() failed with '%s'\n", err)
-		}
 		g.genSourceFile(sf)
 
 		if false {

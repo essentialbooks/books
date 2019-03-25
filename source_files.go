@@ -3,12 +3,8 @@ package main
 import (
 	"fmt"
 	"net/url"
-	"path/filepath"
 	"strconv"
 	"strings"
-
-	"github.com/essentialbooks/books/pkg/common"
-	"github.com/kjk/notionapi"
 )
 
 /*
@@ -63,14 +59,12 @@ type SourceFile struct {
 	// raw content of the code snippet with line endings normalized to '\n'
 	// it can either come from code block in Notion or a file on disk
 	// or replit etc.
-	CodeSnippet []byte
+	CodeFull []byte
 
-	LinesRaw []string // Data split into lines
-
-	// LinesRaw after extracting directive, run cmd at the top
+	// CodeFull after extracting directive, run cmd at the top
 	// and removing :show annotation lines
 	// This is the content to execute
-	LinesToRun []string
+	CodeToRun string
 
 	// the part that we want to show i.e. the parts inside
 	// :show start, :show end blocks
@@ -83,8 +77,7 @@ type SourceFile struct {
 // DataToRun returns content of the file after filtering, that's the
 // version we want to execute to get the output
 func (f *SourceFile) DataToRun() []byte {
-	s := strings.Join(f.LinesToRun, "\n")
-	return []byte(s)
+	return []byte(f.CodeToRun)
 }
 
 // DataCode returns part of the file tbat we want to show
@@ -287,83 +280,25 @@ func setGlotPlaygroundID(b *Book, sf *SourceFile) error {
 
 	fileName := sf.Directive.FileName
 	snippetName := sf.SnippetName
-	id, err := getSha1ToGlotPlaygroundIDCached(b, sf.DataToRun(), snippetName, fileName, lang)
+
+	d := string(sf.CodeToRun)
+	rsp, err := glotGetSnippedID(d, snippetName, fileName, lang)
 	if err != nil {
 		return err
 	}
+	id := rsp.ID
 	sf.GlotPlaygroundID = id
 	sf.PlaygroundURI = "https://glot.io/snippets/" + sf.GlotPlaygroundID
 	return nil
 }
 
 func setSourceFileData(sf *SourceFile, data []byte) error {
-	sf.CodeSnippet = data
-	sf.LinesRaw = dataToLines(sf.CodeSnippet)
-	lines := sf.LinesRaw
+	sf.CodeFull = data
+	lines := dataToLines(sf.CodeFull)
 	directive, lines, err := extractFileDirectives(lines)
 	sf.Directive = directive
-	sf.LinesToRun = removeAnnotationLines(lines)
+	linesToRun := removeAnnotationLines(lines)
+	sf.CodeToRun = strings.Join(linesToRun, "\n")
 	sf.LinesCode, err = extractCodeSnippets(lines)
 	return err
-}
-
-func loadSourceFile(b *Book, path string) (*SourceFile, error) {
-	data, err := common.ReadFileNormalized(path)
-	if err != nil {
-		return nil, err
-	}
-	name := filepath.Base(path)
-	lang := getLangFromFileExt(filepath.Ext(path))
-	gitHubURL := getGitHubPathForFile(path)
-	sf := &SourceFile{
-		Path:      path,
-		FileName:  name,
-		Lang:      lang,
-		GitHubURL: gitHubURL,
-	}
-
-	err = setSourceFileData(sf, data)
-	if err != nil {
-		fmt.Printf("loadSourceFile: '%s', setSourceFileData() failed with '%s'\n", path, err)
-		panicIfErr(err)
-	}
-	if sf.Directive.NoOutput {
-		fmt.Printf("NoOutput for '%s'\n", path)
-	}
-	setGoPlaygroundID(b, sf)
-	err = getOutputCached(b, sf)
-	fmt.Printf("loadSourceFile: '%s', lang: '%s'\n", path, lang)
-	return sf, nil
-}
-
-// TODO: remove when all code moved to repl.it
-func extractSourceFiles(b *Book, p *Page) {
-	page := p.NotionPage
-	for _, block := range page.Root.Content {
-		if block.Type != notionapi.BlockEmbed {
-			continue
-		}
-		uri := block.FormatEmbed.DisplaySource
-		if strings.Contains(uri, "repl.it/") {
-			panic("NYI")
-			continue
-		}
-		relativePath := gitoembedToRelativePath(uri)
-		if relativePath == "" {
-			panic("NYI")
-			fmt.Printf("Couldn't parse embed uri '%s'\n", uri)
-			continue
-		}
-		panic("NYI")
-		// fmt.Printf("Embed uri: %s, relativePath: %s\n", uri, relativePath)
-		//path := filepath.Join(wd, relativePath)
-		path := relativePath
-		sf, err := loadSourceFile(b, path)
-		if err != nil {
-			fmt.Printf("extractSourceFiles: loadSourceFile('%s') (uri: '%s') failed with '%s'\n", path, uri, err)
-			panicIfErr(err)
-		}
-		sf.EmbedURL = uri
-		p.SourceFiles = append(p.SourceFiles, sf)
-	}
 }

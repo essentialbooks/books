@@ -7,11 +7,13 @@ import (
 	"path/filepath"
 
 	"github.com/kjk/siser"
+	"github.com/kjk/u"
 )
 
-type CodeSnippetWithOutput struct {
+type CodeInfo struct {
 	// code as extracted from
-	Code       string
+	CodeFull   string
+	CodeToRun  string
 	Lang       string
 	GlotOutput string
 	// id of glot.id code snippet for this code, if exists
@@ -19,44 +21,77 @@ type CodeSnippetWithOutput struct {
 	// id of https://goplay.space snippet for this code, if exists
 	GoPlayID string
 
-	// calculated from Code
-	codeSha1 string
+	sha1 string
 }
 
-func (c *CodeSnippetWithOutput) Output() string {
-	// we might support output from other source in the future
-	return c.GlotOutput
+func (c *CodeInfo) Sha1() string {
+	if c.sha1 == "" {
+		c.sha1 = u.Sha1HexOfBytes([]byte(c.CodeFull))
+	}
+	return c.sha1
 }
 
 type Cache struct {
 	path string
 
-	sha1ToCode map[string]*CodeSnippetWithOutput
+	sha1ToCode map[string]*CodeInfo
 }
 
-func (c *Cache) addCodeSnippet(snippet *CodeSnippetWithOutput) error {
-	// TODO: write me:
-	// - calc sha1 of Code
-	// - if doesn't exist or different than current, save to a file
-	//   changed should only happen if we expand what we do
-	//fmt.Printf("addCodeSnippet: %s => %s\n", sha1, id)
-	/*
-		r := siser.Record{
-			Keys:   []string{"sha1", "id"},
-			Values: []string{sha1, id},
-			Name:   "goplayid",
+func codeInfoToRecord(code *CodeInfo) *siser.Record {
+	rec := &siser.Record{
+		Name: "code",
+	}
+	rec.Append("CodeFull", code.CodeFull)
+	rec.Append("CodeToRun", code.CodeToRun)
+	if code.Lang != "" {
+		rec.Append("Lang", code.Lang)
+	}
+	if code.GlotID != "" {
+		rec.Append("GlotID", code.GlotID)
+	}
+	if code.GoPlayID != "" {
+		rec.Append("GoPlayID", code.GoPlayID)
+	}
+	return rec
+}
+
+func recordToCodeInfo(rec *siser.Record) *CodeInfo {
+	code := &CodeInfo{}
+	panicIf(rec.Name != "code")
+	for _, e := range rec.Entries {
+		switch e.Key {
+		case "CodeFull":
+			code.CodeFull = e.Value
+		case "CodeToRun":
+			code.CodeToRun = e.Value
+		case "Lang":
+			code.Lang = e.Value
+		case "GlotID":
+			code.GlotID = e.Value
+		case "GoPlayID":
+			code.GoPlayID = e.Value
+		default:
+			err := fmt.Errorf("Unrecognized key '%s'", e.Key)
+			must(err)
 		}
-		f := openForAppend(c.path)
-		defer f.Close()
-		w := siser.NewWriter(f)
-		_, err := w.WriteRecord(&r)
-		return err
-	*/
-	return nil
+	}
+	panicIf(code.CodeFull == "")
+	return code
+}
+
+func (c *Cache) saveCodeInfo(code *CodeInfo) error {
+	c.sha1ToCode[code.Sha1()] = code
+	rec := codeInfoToRecord(code)
+	//lg("addCodeSnippet from https://notion.so/%s\n", id)
+	f := openForAppend(c.path)
+	defer f.Close()
+	w := siser.NewWriter(f)
+	_, err := w.WriteRecord(rec)
+	return err
 }
 
 func loadCache(path string) *Cache {
-	lg("loadCache: %s\n", path)
+	lg("loadCache: %s", path)
 	dir := filepath.Dir(path)
 	// the directory must exist
 	_, err := os.Stat(dir)
@@ -64,7 +99,7 @@ func loadCache(path string) *Cache {
 
 	cache := &Cache{
 		path:       path,
-		sha1ToCode: map[string]*CodeSnippetWithOutput{},
+		sha1ToCode: map[string]*CodeInfo{},
 	}
 
 	f, err := os.Open(path)
@@ -75,15 +110,19 @@ func loadCache(path string) *Cache {
 	}
 	defer f.Close()
 
+	nRecords := 0
 	r := siser.NewReader(bufio.NewReader(f))
 	for r.ReadNextRecord() {
 		rec := r.Record
 		if rec.Name == "code" {
-			panic("NYI")
+			codeInfo := recordToCodeInfo(rec)
+			cache.sha1ToCode[codeInfo.Sha1()] = codeInfo
 		} else {
-			panic(fmt.Errorf("unknown record: '%s'", rec.Name))
+			panic(fmt.Errorf("unknown record type: '%s'", rec.Name))
 		}
+		nRecords++
 	}
 	must(r.Err())
+	fmt.Printf(" got %d cache records\n", nRecords)
 	return cache
 }
