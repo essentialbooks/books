@@ -335,6 +335,6 @@ func bookFromPages(book *Book) {
 	startPageID := book.NotionStartPageID
 	page := book.pageIDToPage[startPageID]
 	panicIf(page.Root.Type != notionapi.BlockPage, "start block is of type '%s' and not '%s'", page.Root.Type, notionapi.BlockPage)
-	book.Title = page.Root.Title
+	book.TitleLong = page.Root.Title
 	book.RootPage = bookPageFromNotionPage(book, page)
 }

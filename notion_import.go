@@ -149,7 +149,7 @@ func loadNotionPage(c *notionapi.Client, b *Book, pageID string) (*notionapi.Pag
 	if b.isCachedPageNotOutdated[pageID] {
 		page := b.cachedPagesFromDisk[pageID]
 		nTotalFromCache++
-		fmt.Printf("Skipping %d %s %s (cached is current)\n", n, page.ID, page.Root.Title)
+		verbose("Skipping %d %s %s (cached is current)\n", n, page.ID, page.Root.Title)
 		return page, nil
 	}
 
@@ -302,7 +302,7 @@ func checkIfPagesAreOutdated(c *notionapi.Client, cachedPagesFromDisk map[string
 	sort.Strings(ids)
 	var versions []int64
 	rest := ids
-	maxPerCall := 128
+	maxPerCall := 256
 	for len(rest) > 0 {
 		n := len(rest)
 		if n > maxPerCall {
@@ -310,7 +310,7 @@ func checkIfPagesAreOutdated(c *notionapi.Client, cachedPagesFromDisk map[string
 		}
 		tmpIDs := rest[:n]
 		rest = rest[n:]
-		fmt.Printf("getting versions for %d pages\n", len(tmpIDs))
+		verbose("Getting versions for %d pages\n", len(tmpIDs))
 		tmpVers, err := getVersionsForPages(c, tmpIDs)
 		panicIfErr(err)
 		versions = append(versions, tmpVers...)
@@ -326,7 +326,7 @@ func checkIfPagesAreOutdated(c *notionapi.Client, cachedPagesFromDisk map[string
 			nOutdated++
 		}
 	}
-	fmt.Printf("checkIfPagesAreOutdated: %d pages, %d outdated\n", len(ids), nOutdated)
+	lg("%d pages, %d outdated\n", len(ids), nOutdated)
 	return isCachedPageNotOutdated
 }
 
@@ -335,7 +335,7 @@ func loadNotionPages(c *notionapi.Client, b *Book, indexPageID string, idToPage 
 	b.isCachedPageNotOutdated = checkIfPagesAreOutdated(c, b.cachedPagesFromDisk)
 	toVisit := []string{indexPageID}
 
-	nDownloadedPage := 1
+	nDownloadedPage = 1
 	for len(toVisit) > 0 {
 		pageID := normalizeID(toVisit[0])
 		toVisit = toVisit[1:]

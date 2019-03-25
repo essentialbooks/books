@@ -566,12 +566,12 @@ func (g *HTMLGenerator) genBlock(block *notionapi.Block) {
 		setDefaultFileNameFromLanguage(sf)
 		err = getOutputCached(g.book, sf)
 		if err != nil {
-			fmt.Printf("getOutputCached() failed.\nsf.DataToRun():\n%s\n", sf.DataToRun())
+			lg("getOutputCached() failed.\nsf.DataToRun():\n%s\n", sf.DataToRun())
 			panicIfErr(err)
 		}
 		err = setGlotPlaygroundID(g.book, sf)
 		if err != nil {
-			fmt.Printf("setGlotPlaygroundID() failed with '%s'\n", err)
+			lg("setGlotPlaygroundID() failed with '%s'\n", err)
 		}
 		g.genSourceFile(sf)
 

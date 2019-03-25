@@ -338,8 +338,6 @@ func loadSourceFile(b *Book, path string) (*SourceFile, error) {
 
 // TODO: remove when all code moved to repl.it
 func extractSourceFiles(b *Book, p *Page) {
-	//wd, err := os.Getwd()
-	//panicIfErr(err)
 	page := p.NotionPage
 	for _, block := range page.Root.Content {
 		if block.Type != notionapi.BlockEmbed {
@@ -347,13 +345,16 @@ func extractSourceFiles(b *Book, p *Page) {
 		}
 		uri := block.FormatEmbed.DisplaySource
 		if strings.Contains(uri, "repl.it/") {
+			panic("NYI")
 			continue
 		}
 		relativePath := gitoembedToRelativePath(uri)
 		if relativePath == "" {
+			panic("NYI")
 			fmt.Printf("Couldn't parse embed uri '%s'\n", uri)
 			continue
 		}
+		panic("NYI")
 		// fmt.Printf("Embed uri: %s, relativePath: %s\n", uri, relativePath)
 		//path := filepath.Join(wd, relativePath)
 		path := relativePath

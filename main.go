@@ -119,9 +119,9 @@ func parseFlags() {
 
 func downloadBook(c *notionapi.Client, book *Book) {
 	notionStartPageID := book.NotionStartPageID
-	fmt.Printf("Loading %s...", book.Title)
+	lg("Loading %s...", book.Title)
 	loadNotionPages(c, book, notionStartPageID, book.pageIDToPage)
-	fmt.Printf(" got %d pages\n", len(book.pageIDToPage))
+	lg("Got %d pages for %s\n", len(book.pageIDToPage), book.Title)
 	bookFromPages(book)
 }
 
