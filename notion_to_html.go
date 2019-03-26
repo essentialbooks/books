@@ -86,7 +86,7 @@ func (g *HTMLGenerator) maybeReplaceNotionLink(uri string) string {
 	}
 	page := g.book.idToPage[id]
 	if page == nil {
-		fmt.Printf("Didn't find page with id '%s' extracted from url %s\n", id, uri)
+		lg("Didn't find page with id '%s' extracted from url %s\n", id, uri)
 		return uri
 	}
 	return page.URL()
@@ -97,7 +97,7 @@ func (g *HTMLGenerator) getURLAndTitleForBlock(block *notionapi.Block) (string, 
 	page := g.book.idToPage[id]
 	if page == nil {
 		title := cleanTitle(block.Title)
-		fmt.Printf("No article for id %s %s\n", id, title)
+		lg("No article for id %s %s\n", id, title)
 		url := "/article/" + id + "/" + urlify(title)
 		return url, title
 	}
@@ -124,12 +124,12 @@ func (g *HTMLGenerator) reportIfInvalidLink(uri string) {
 		return
 	}
 	pageID := normalizeID(g.page.getID())
-	fmt.Printf("Found invalid link '%s' in page https://notion.so/%s", uri, pageID)
+	lg("Found invalid link '%s' in page https://notion.so/%s", uri, pageID)
 	destPage := findPageByID(g.book, uri)
 	if destPage != nil {
-		fmt.Printf(" most likely pointing to https://notion.so/%s\n", normalizeID(destPage.NotionPage.ID))
+		lg(" most likely pointing to https://notion.so/%s\n", normalizeID(destPage.NotionPage.ID))
 	} else {
-		fmt.Printf("\n")
+		lg("\n")
 	}
 }
 
@@ -274,8 +274,8 @@ func (g *HTMLGenerator) genEmbed(block *notionapi.Block) {
 func (g *HTMLGenerator) genReplitEmbed(block *notionapi.Block) {
 	uri := block.FormatEmbed.DisplaySource
 	uri = strings.Replace(uri, "?lite=true", "", -1)
-	fmt.Printf("Page: https://notion.so/%s\n", g.page.NotionID)
-	fmt.Printf("  Replit: %s\n", uri)
+	lg("Page: https://notion.so/%s\n", g.page.NotionID)
+	lg("  Replit: %s\n", uri)
 	panic("we no longer use replit")
 }
 
@@ -314,7 +314,7 @@ func (g *HTMLGenerator) genGitEmbed(block *notionapi.Block) {
 	// currently we only handle source code file embeds but might handle
 	// others (graphs etc.)
 	if f == nil {
-		fmt.Printf("genEmbed: didn't find source file for url %s\n", uri)
+		lg("genEmbed: didn't find source file for url %s\n", uri)
 		return
 	}
 
@@ -325,7 +325,7 @@ func (g *HTMLGenerator) genCollectionView(block *notionapi.Block) {
 	viewInfo := block.CollectionViews[0]
 	view := viewInfo.CollectionView
 	if view.Format == nil {
-		fmt.Printf("genCollectionView: missing view.Format block id: %s\n", block.ID)
+		lg("genCollectionView: missing view.Format block id: %s\n", block.ID)
 		return
 	}
 
@@ -340,7 +340,7 @@ func (g *HTMLGenerator) genCollectionView(block *notionapi.Block) {
 		if colInfo != nil {
 			name = colInfo.Name
 		} else {
-			fmt.Printf("Missing colInfo in block ID '%s'\n", block.ID)
+			lg("Missing colInfo in block ID '%s', page: %s\n", block.ID, g.page.NotionID)
 		}
 		s += `<th>` + html.EscapeString(name) + `</th>`
 	}
@@ -550,8 +550,8 @@ func (g *HTMLGenerator) genBlock(block *notionapi.Block) {
 		data := []byte(block.Code)
 		err := setSourceFileData(sf, data)
 		if err != nil {
-			fmt.Printf("genBlock: setSourceFileData() failed with '%s'\n", err)
-			fmt.Printf("page: %s\n", sf.NotionOriginURL)
+			lg("genBlock: setSourceFileData() failed with '%s'\n", err)
+			lg("page: %s\n", sf.NotionOriginURL)
 			//panicIfErr(err)
 		}
 
@@ -649,7 +649,7 @@ func (g *HTMLGenerator) genBlocks(blocks []*notionapi.Block) {
 	for len(blocks) > 0 {
 		block := blocks[0]
 		if block == nil {
-			fmt.Printf("Missing block\n")
+			lg("Missing block\n")
 			blocks = blocks[1:]
 			continue
 		}

@@ -11,8 +11,8 @@
     "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
     "created_time": 1550459580000,
     "format": {
-      "page_full_width": true,
-      "page_small_text": true
+      "page_full_width": false,
+      "page_small_text": false
     },
     "id": "0fc3a590-ba5f-4e12-8e7c-750e8ecc961d",
     "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
@@ -34,7 +34,7 @@
       ]
     },
     "type": "page",
-    "version": 27,
+    "version": 28,
     "content_resolved": [
       {
         "alive": true,
@@ -174,9 +174,9 @@
       "page_cover": "",
       "page_cover_position": 0,
       "page_font": "",
-      "page_full_width": true,
+      "page_full_width": false,
       "page_icon": "",
-      "page_small_text": true
+      "page_small_text": false
     }
   },
   "Users": [
@@ -185,12 +185,12 @@
       "family_name": "Kowalczyk",
       "given_name": "Krzysztof",
       "id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
-      "locale": "en",
+      "locale": "",
       "mobile_onboarding_completed": true,
       "onboarding_completed": true,
       "profile_photo": "https://s3-us-west-2.amazonaws.com/public.notion-static.com/2dcaa66c-7674-4ff6-9924-601785b63561/head-bw-640x960.png",
-      "time_zone": "America/Los_Angeles",
-      "version": 19
+      "time_zone": "",
+      "version": 51
     }
   ],
   "Tables": null

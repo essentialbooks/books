@@ -281,7 +281,7 @@ func setGlotPlaygroundID(b *Book, sf *SourceFile) error {
 	fileName := sf.Directive.FileName
 	snippetName := sf.SnippetName
 
-	d := string(sf.CodeToRun)
+	d := []byte(sf.CodeToRun)
 	rsp, err := glotGetSnippedID(d, snippetName, fileName, lang)
 	if err != nil {
 		return err

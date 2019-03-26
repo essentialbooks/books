@@ -93,13 +93,22 @@ func getOutputCached(b *Book, sf *SourceFile) error {
 	code := sf.DataToRun()
 	sha1Hex := u.Sha1HexOfBytes(code)
 
-	codeInfo := b.cache.sha1ToCode[sha1Hex]
+	codeInfo, existing := b.cache.getCodeInfoBySha1(sha1Hex)
+	if !existing {
+		codeInfo = &CodeInfo{
+			CodeFull:  string(sf.CodeFull),
+			CodeToRun: sf.CodeToRun,
+			Lang:      sf.Lang,
+		}
+		if !flgNoUpdateOutput {
+			b.cache.saveCodeInfo(codeInfo)
+			return nil
+		}
+	}
+
 	if codeInfo != nil {
 		// is guaranteed to exist
 		sf.Output = codeInfo.Output()
-		return nil
-	}
-	if flgNoUpdateOutput {
 		return nil
 	}
 
@@ -157,15 +166,5 @@ func getOutputCached(b *Book, sf *SourceFile) error {
 	err := setGlotPlaygroundID(b, sf)
 	must(err, "setGlotPlaygroundID() failed with '%s'\n", err)
 
-	codeInfo = &CodeInfo{
-		CodeFull:   string(sf.CodeFull),
-		CodeRun:    sf.CodeToRun,
-		GlotID:     sf.GlotPlaygroundID,
-		Lang:       sf.Lang,
-		GlotOutput: string(sf.Output),
-		GoPlayID:   sf.GoPlaygroundID,
-	}
-
-	b.cache.saveCodeInfo(codeInfo)
 	return nil
 }
