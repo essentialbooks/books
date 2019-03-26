@@ -42,7 +42,7 @@
     "id": "abb984fe-c0d0-4d74-b2d4-94ed3206d1bc",
     "ignore_block_count": true,
     "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
-    "last_edited_time": 1552285320000,
+    "last_edited_time": 1553594040000,
     "parent_id": "2cab1ed2-b7a4-4584-b56b-0d3ca9b80185",
     "parent_table": "block",
     "properties": {
@@ -53,7 +53,7 @@
       ]
     },
     "type": "page",
-    "version": 69,
+    "version": 70,
     "content_resolved": [
       {
         "alive": true,
@@ -643,7 +643,7 @@
         "created_time": 1552285352295,
         "id": "e568912b-7c6e-4538-93bd-e3d4020c412a",
         "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
-        "last_edited_time": 1552285320000,
+        "last_edited_time": 1553594040000,
         "parent_id": "abb984fe-c0d0-4d74-b2d4-94ed3206d1bc",
         "parent_table": "block",
         "properties": {
@@ -654,13 +654,13 @@
           ],
           "title": [
             [
-              "// no playground\npackage main\n\nimport (\n\t\"encoding/csv\"\n\t\"fmt\"\n\t\"io/ioutil\"\n\t\"log\"\n\t\"os\"\n)\n\n// :show start\nfunc writeCSV() error {\n\tf, err := os.Create(\"stocks_tmp.csv\")\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tw := csv.NewWriter(f)\n\trecords := [][]string{\n\t\t{\"date\", \"price\", \"name\"},\n\t\t{\"2013-02-08\", \"15,07\", \"GOOG\"},\n\t\t{\"2013-02-09\", \"15,09\", \"GOOG\"},\n\t}\n\tfor _, rec := range records {\n\t\terr = w.Write(rec)\n\t\tif err != nil {\n\t\t\tf.Close()\n\t\t\treturn err\n\t\t}\n\t}\n\n\t// csv.Writer might buffer writes for performance so we must\n\t// Flush to ensure all data has been written to underlying\n\t// writer\n\tw.Flush()\n\n\t// Flush doesn't return an error. If it failed to write, we\n\t// can get the error with Error()\n\terr = w.Error()\n\tif err != nil {\n\t\treturn err\n\t}\n\t// Close might also fail due to flushing out buffered writes\n\terr = f.Close()\n\treturn err\n}\n\n// :show end\n\nfunc main() {\n\twriteCSV()\n\td, err := ioutil.ReadFile(\"stocks_tmp.csv\")\n\tif err != nil {\n\t\tlog.Fatalf(\"ioutil.ReadAll() failed with '%s'\\n\", err)\n\t}\n\tfmt.Printf(\"%s\\n\", string(d))\n\tos.Remove(\"stocks_tmp.csv\")\n}"
+              "// :glot, no playground\npackage main\n\nimport (\n\t\"encoding/csv\"\n\t\"fmt\"\n\t\"io/ioutil\"\n\t\"log\"\n\t\"os\"\n)\n\n// :show start\nfunc writeCSV() error {\n\tf, err := os.Create(\"stocks_tmp.csv\")\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tw := csv.NewWriter(f)\n\trecords := [][]string{\n\t\t{\"date\", \"price\", \"name\"},\n\t\t{\"2013-02-08\", \"15,07\", \"GOOG\"},\n\t\t{\"2013-02-09\", \"15,09\", \"GOOG\"},\n\t}\n\tfor _, rec := range records {\n\t\terr = w.Write(rec)\n\t\tif err != nil {\n\t\t\tf.Close()\n\t\t\treturn err\n\t\t}\n\t}\n\n\t// csv.Writer might buffer writes for performance so we must\n\t// Flush to ensure all data has been written to underlying\n\t// writer\n\tw.Flush()\n\n\t// Flush doesn't return an error. If it failed to write, we\n\t// can get the error with Error()\n\terr = w.Error()\n\tif err != nil {\n\t\treturn err\n\t}\n\t// Close might also fail due to flushing out buffered writes\n\terr = f.Close()\n\treturn err\n}\n\n// :show end\n\nfunc main() {\n\twriteCSV()\n\td, err := ioutil.ReadFile(\"stocks_tmp.csv\")\n\tif err != nil {\n\t\tlog.Fatalf(\"ioutil.ReadAll() failed with '%s'\\n\", err)\n\t}\n\tfmt.Printf(\"%s\\n\", string(d))\n\tos.Remove(\"stocks_tmp.csv\")\n}"
             ]
           ]
         },
         "type": "code",
-        "version": 14,
-        "code": "// no playground\npackage main\n\nimport (\n\t\"encoding/csv\"\n\t\"fmt\"\n\t\"io/ioutil\"\n\t\"log\"\n\t\"os\"\n)\n\n// :show start\nfunc writeCSV() error {\n\tf, err := os.Create(\"stocks_tmp.csv\")\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tw := csv.NewWriter(f)\n\trecords := [][]string{\n\t\t{\"date\", \"price\", \"name\"},\n\t\t{\"2013-02-08\", \"15,07\", \"GOOG\"},\n\t\t{\"2013-02-09\", \"15,09\", \"GOOG\"},\n\t}\n\tfor _, rec := range records {\n\t\terr = w.Write(rec)\n\t\tif err != nil {\n\t\t\tf.Close()\n\t\t\treturn err\n\t\t}\n\t}\n\n\t// csv.Writer might buffer writes for performance so we must\n\t// Flush to ensure all data has been written to underlying\n\t// writer\n\tw.Flush()\n\n\t// Flush doesn't return an error. If it failed to write, we\n\t// can get the error with Error()\n\terr = w.Error()\n\tif err != nil {\n\t\treturn err\n\t}\n\t// Close might also fail due to flushing out buffered writes\n\terr = f.Close()\n\treturn err\n}\n\n// :show end\n\nfunc main() {\n\twriteCSV()\n\td, err := ioutil.ReadFile(\"stocks_tmp.csv\")\n\tif err != nil {\n\t\tlog.Fatalf(\"ioutil.ReadAll() failed with '%s'\\n\", err)\n\t}\n\tfmt.Printf(\"%s\\n\", string(d))\n\tos.Remove(\"stocks_tmp.csv\")\n}",
+        "version": 22,
+        "code": "// :glot, no playground\npackage main\n\nimport (\n\t\"encoding/csv\"\n\t\"fmt\"\n\t\"io/ioutil\"\n\t\"log\"\n\t\"os\"\n)\n\n// :show start\nfunc writeCSV() error {\n\tf, err := os.Create(\"stocks_tmp.csv\")\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tw := csv.NewWriter(f)\n\trecords := [][]string{\n\t\t{\"date\", \"price\", \"name\"},\n\t\t{\"2013-02-08\", \"15,07\", \"GOOG\"},\n\t\t{\"2013-02-09\", \"15,09\", \"GOOG\"},\n\t}\n\tfor _, rec := range records {\n\t\terr = w.Write(rec)\n\t\tif err != nil {\n\t\t\tf.Close()\n\t\t\treturn err\n\t\t}\n\t}\n\n\t// csv.Writer might buffer writes for performance so we must\n\t// Flush to ensure all data has been written to underlying\n\t// writer\n\tw.Flush()\n\n\t// Flush doesn't return an error. If it failed to write, we\n\t// can get the error with Error()\n\terr = w.Error()\n\tif err != nil {\n\t\treturn err\n\t}\n\t// Close might also fail due to flushing out buffered writes\n\terr = f.Close()\n\treturn err\n}\n\n// :show end\n\nfunc main() {\n\twriteCSV()\n\td, err := ioutil.ReadFile(\"stocks_tmp.csv\")\n\tif err != nil {\n\t\tlog.Fatalf(\"ioutil.ReadAll() failed with '%s'\\n\", err)\n\t}\n\tfmt.Printf(\"%s\\n\", string(d))\n\tos.Remove(\"stocks_tmp.csv\")\n}",
         "code_language": "Go"
       },
       {
@@ -1053,12 +1053,12 @@
       "family_name": "Kowalczyk",
       "given_name": "Krzysztof",
       "id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
-      "locale": "en",
+      "locale": "",
       "mobile_onboarding_completed": true,
       "onboarding_completed": true,
       "profile_photo": "https://s3-us-west-2.amazonaws.com/public.notion-static.com/2dcaa66c-7674-4ff6-9924-601785b63561/head-bw-640x960.png",
-      "time_zone": "America/Los_Angeles",
-      "version": 29
+      "time_zone": "",
+      "version": 51
     }
   ],
   "Tables": null

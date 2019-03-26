@@ -133,7 +133,6 @@ func updateGlotOutput(cache *Cache, sf *SourceFile) error {
 	// it's already in cache
 	o := cache.sha1ToGlotOutput[sf.Sha1()]
 	if o != nil {
-		panicIf(o.Output == "")
 		sf.GlotOutput = o.Output
 		return nil
 	}

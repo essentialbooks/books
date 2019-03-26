@@ -89,6 +89,7 @@ func (g *HTMLGenerator) maybeReplaceNotionLink(uri string) string {
 		lg("Didn't find page with id '%s' extracted from url %s\n", id, uri)
 		return uri
 	}
+	page.Book = g.book
 	return page.URL()
 }
 
@@ -279,23 +280,23 @@ func (g *HTMLGenerator) genReplitEmbed(block *notionapi.Block) {
 	panic("we no longer use replit")
 }
 
-func (g *HTMLGenerator) genSourceFile(f *SourceFile) {
+func (g *HTMLGenerator) genSourceFile(sf *SourceFile) {
 	{
 		var tmp bytes.Buffer
-		code := f.CodeToShow()
-		lang := f.Lang
+		code := sf.CodeToShow()
+		lang := sf.Lang
 		htmlHighlight(&tmp, string(code), lang, "")
 		d := tmp.Bytes()
 		info := CodeBlockInfo{
-			Lang:      f.Lang,
-			GitHubURI: f.GitHubURL,
+			Lang:      sf.Lang,
+			GitHubURI: sf.GitHubURL,
 		}
-		info.PlaygroundURI = f.PlaygroundURI
+		info.PlaygroundURI = sf.PlaygroundURI
 		s := fixupHTMLCodeBlock(string(d), &info)
 		g.f.WriteString(s)
 	}
 
-	output := f.Output()
+	output := sf.Output()
 	if len(output) != 0 {
 		var tmp bytes.Buffer
 		htmlHighlight(&tmp, output, "text", "")
