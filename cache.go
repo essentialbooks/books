@@ -73,7 +73,9 @@ func (c *Cache) saveGlotOutput(code *GlotOutput) {
 	rec.Append("FileName", code.FileName)
 	rec.Append("CodeFull", code.CodeFull)
 	rec.Append("CodeToRun", code.CodeToRun)
-	rec.Append("RunCmd", code.RunCmd)
+	if code.RunCmd != "" {
+		rec.Append("RunCmd", code.RunCmd)
+	}
 	rec.Append("Output", code.Output)
 	err := c.saveRecord(rec)
 	must(err)
@@ -96,7 +98,6 @@ func (c *Cache) loadGlotOutput(rec *siser.Record) {
 	o.CodeToRun, ok = rec.Get("CodeToRun")
 	panicIf(!ok)
 	o.RunCmd, ok = rec.Get("RunCmd")
-	panicIf(!ok)
 	o.Output, ok = rec.Get("Output")
 	panicIf(!ok)
 
