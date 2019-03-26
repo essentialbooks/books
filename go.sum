@@ -43,6 +43,8 @@ github.com/kjk/siser v0.0.0-20190323104515-845a8358ae77 h1:nNszvKXqQP7IcY6MDdbsx
 github.com/kjk/siser v0.0.0-20190323104515-845a8358ae77/go.mod h1:oo+WID72k9eJqhReKJ8yXVm//jw96Y07p+xM467Ck4Y=
 github.com/kjk/siser v0.0.0-20190325044643-690ab469058a h1:EduKQciEucmCxOqCFzqLu3V1wj4aSVKQ2ctMFmHfSwc=
 github.com/kjk/siser v0.0.0-20190325044643-690ab469058a/go.mod h1:oo+WID72k9eJqhReKJ8yXVm//jw96Y07p+xM467Ck4Y=
+github.com/kjk/siser v0.0.0-20190326100825-7db886e875f8 h1:UKXwe5RSUUn0G4nSOf4XkoLvz6Op0HAnjO+kT86K59E=
+github.com/kjk/siser v0.0.0-20190326100825-7db886e875f8/go.mod h1:oo+WID72k9eJqhReKJ8yXVm//jw96Y07p+xM467Ck4Y=
 github.com/kjk/u v0.0.0-20170711051841-93181be023c9 h1:1j5Nzg2ooGH8dCMJiiMeRaW8nc299dVotlOkT9RTaK4=
 github.com/kjk/u v0.0.0-20170711051841-93181be023c9/go.mod h1:1FuNJuW8o6xAHuUmu/8Iz26DkqkZJ353v42zJpkQonk=
 github.com/kylelemons/godebug v0.0.0-20170820004349-d65d576e9348 h1:MtvEpTB6LX3vkb4ax0b5D2DHbNAUsen0Gx5wZoq3lV4=

@@ -10,7 +10,7 @@ require (
 	github.com/dlclark/regexp2 v1.1.6 // indirect
 	github.com/google/shlex v0.0.0-20150127133951-6f45313302b9
 	github.com/kjk/notionapi v0.0.0-20190322075546-7fc31d25aeb2
-	github.com/kjk/siser v0.0.0-20190325044643-690ab469058a
+	github.com/kjk/siser v0.0.0-20190326100825-7db886e875f8
 	github.com/kjk/u v0.0.0-20170711051841-93181be023c9
 	github.com/kylelemons/godebug v0.0.0-20170820004349-d65d576e9348
 	github.com/mattn/go-isatty v0.0.4 // indirect
