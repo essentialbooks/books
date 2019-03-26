@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/kjk/u"
 )
 
 /*
@@ -59,7 +61,7 @@ type SourceFile struct {
 	// raw content of the code snippet with line endings normalized to '\n'
 	// it can either come from code block in Notion or a file on disk
 	// or replit etc.
-	CodeFull []byte
+	CodeFull string
 
 	// CodeFull after extracting directive, run cmd at the top
 	// and removing :show annotation lines
@@ -68,21 +70,23 @@ type SourceFile struct {
 
 	// the part that we want to show i.e. the parts inside
 	// :show start, :show end blocks
-	LinesCode []string
+	LinesToShow []string
 
-	// output of running a file
-	Output string
+	// output of running a file via glot.io
+	GlotOutput string
 }
 
-// DataToRun returns content of the file after filtering, that's the
-// version we want to execute to get the output
-func (f *SourceFile) DataToRun() []byte {
-	return []byte(f.CodeToRun)
+func (f *SourceFile) Output() string {
+	return f.GlotOutput
 }
 
-// DataCode returns part of the file tbat we want to show
-func (f *SourceFile) DataCode() []byte {
-	s := strings.Join(f.LinesCode, "\n")
+func (f *SourceFile) Sha1() string {
+	return u.Sha1HexOfBytes([]byte(f.CodeFull))
+}
+
+// CodeToShow returns part of the file tbat we want to show
+func (f *SourceFile) CodeToShow() []byte {
+	s := strings.Join(f.LinesToShow, "\n")
 	return []byte(s)
 }
 
@@ -249,7 +253,7 @@ func setGoPlaygroundID(b *Book, sf *SourceFile) error {
 	if sf.Directive.NoPlayground {
 		return nil
 	}
-	id, err := getSha1ToGoPlaygroundIDCached(b, sf.DataToRun())
+	id, err := getSha1ToGoPlaygroundIDCached(b, sf.CodeToRun)
 	if err != nil {
 		return err
 	}
@@ -258,47 +262,13 @@ func setGoPlaygroundID(b *Book, sf *SourceFile) error {
 	return nil
 }
 
-var allowedLanguages = map[string]bool{
-	"go":         true,
-	"javascript": true,
-	"cpp":        true,
-}
-
-func setGlotPlaygroundID(b *Book, sf *SourceFile) error {
-	if !sf.Directive.Glot {
-		return nil
-	}
-	if sf.Directive.NoPlayground {
-		return nil
-	}
-
-	lang := strings.ToLower(sf.Lang)
-	lang = glotConvertLanguage(lang)
-	if _, ok := allowedLanguages[lang]; !ok {
-		return fmt.Errorf("'%s' ('%s') is not a supported language", sf.Lang, lang)
-	}
-
-	fileName := sf.Directive.FileName
-	snippetName := sf.SnippetName
-
-	d := []byte(sf.CodeToRun)
-	rsp, err := glotGetSnippedID(d, snippetName, fileName, lang)
-	if err != nil {
-		return err
-	}
-	id := rsp.ID
-	sf.GlotPlaygroundID = id
-	sf.PlaygroundURI = "https://glot.io/snippets/" + sf.GlotPlaygroundID
-	return nil
-}
-
 func setSourceFileData(sf *SourceFile, data []byte) error {
-	sf.CodeFull = data
-	lines := dataToLines(sf.CodeFull)
+	sf.CodeFull = string(data)
+	lines := dataToLines(data)
 	directive, lines, err := extractFileDirectives(lines)
 	sf.Directive = directive
 	linesToRun := removeAnnotationLines(lines)
 	sf.CodeToRun = strings.Join(linesToRun, "\n")
-	sf.LinesCode, err = extractCodeSnippets(lines)
+	sf.LinesToShow, err = extractCodeSnippets(lines)
 	return err
 }

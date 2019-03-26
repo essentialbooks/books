@@ -10,51 +10,29 @@ import (
 	"github.com/kjk/u"
 )
 
-type CodeInfo struct {
-	// code as extracted from
-	CodeFull  string
-	CodeToRun string
-	Lang      string
-
-	GlotOutput string
-	// id of glot.id code snippet for this code, if exists
-	GlotID string
-
-	// id of https://goplay.space snippet for this code, if exists
-	GoPlayID string
-
-	// sha1 of CodeFull, calculated on demand
-	sha1 string
-}
-
-func (c *CodeInfo) Sha1() string {
-	if c.sha1 == "" {
-		c.sha1 = u.Sha1HexOfBytes([]byte(c.CodeFull))
-	}
-	return c.sha1
-}
-
-// a function in preparation for possible multiple
-func (c *CodeInfo) Output() string {
-	return c.GlotOutput
-}
+const (
+	recNameGlotOutput = "glotoutput"
+	recNameGlotID     = "glotid"
+)
 
 type Cache struct {
 	// path of the cache file
 	path string
 
-	sha1ToCode map[string]*CodeInfo
+	sha1ToGlotOutput map[string]*GlotOutput
+	// id of glot.id code snippet for this code, if exists
+	sha1ToGlotID map[string]string
+	// id of https://goplay.space snippet for this code, if exists
+	sha1ToGoPlayID map[string]string
 }
 
-func (c *Cache) getCodeInfoBySha1(sha1 string) (*CodeInfo, bool) {
-	existing := true
-	codeInfo := c.sha1ToCode[sha1]
-	if codeInfo == nil {
-		existing = false
-		codeInfo = &CodeInfo{}
-		c.sha1ToCode[sha1] = codeInfo
+func NewCache(path string) *Cache {
+	return &Cache{
+		path:             path,
+		sha1ToGlotOutput: map[string]*GlotOutput{},
+		sha1ToGlotID:     map[string]string{},
+		sha1ToGoPlayID:   map[string]string{},
 	}
-	return codeInfo, existing
 }
 
 func (c *Cache) saveRecord(rec *siser.Record) error {
@@ -65,102 +43,90 @@ func (c *Cache) saveRecord(rec *siser.Record) error {
 	return err
 }
 
-func (c *Cache) saveCodeInfo(code *CodeInfo) {
-	panicIf(code.CodeFull == "")
-	codeCurr, existing := c.getCodeInfoBySha1(code.Sha1())
-	same := existing &&
-		codeCurr.Lang == code.Lang &&
-		codeCurr.CodeFull == code.CodeFull &&
-		codeCurr.CodeToRun == code.CodeToRun
+type GlotOutput struct {
+	Lang      string
+	FileName  string
+	CodeFull  string
+	CodeToRun string
+	RunCmd    string
+	Output    string
 
-	if same {
-		lg("saveCodeInfo: skipping because didn't change\n")
-		return
-	}
-	rec := &siser.Record{
-		Name: "code",
-	}
-	if code.Lang != "" {
-		rec.Append("Lang", code.Lang)
-		codeCurr.Lang = code.Lang
-	}
-	rec.Append("Sha1", code.Sha1())
-	rec.Append("CodeFull", code.CodeFull)
-	rec.Append("CodeToRun", code.CodeToRun)
-	err := c.saveRecord(rec)
-	must(err)
-
-	codeCurr.Lang = code.Lang
-	codeCurr.CodeFull = code.CodeFull
-	codeCurr.CodeToRun = code.CodeToRun
+	// sha1 of CodeFull, calculated on demand
+	sha1 string
 }
 
-func (c *Cache) saveGlotInfo(sha1, glotID, glotOutput string) {
-	codeCurr, existing := c.getCodeInfoBySha1(sha1)
-	same := existing &&
-		codeCurr.GlotID == glotID &&
-		codeCurr.GlotOutput == glotOutput
-	if same {
-		lg("saveGlotInfo: skipping because didn't change\n")
-		return
+func (c *GlotOutput) Sha1() string {
+	if c.sha1 == "" {
+		c.sha1 = u.Sha1HexOfBytes([]byte(c.CodeFull))
 	}
+	return c.sha1
+}
 
+func (c *Cache) saveGlotOutput(code *GlotOutput) {
+	panicIf(code.CodeFull == "")
+	panicIf(c.sha1ToGlotOutput[code.Sha1()] != nil)
 	rec := &siser.Record{
-		Name: "glot",
+		Name: recNameGlotOutput,
+	}
+	rec.Append("Sha1", code.Sha1())
+	rec.Append("Lang", code.Lang)
+	rec.Append("FileName", code.FileName)
+	rec.Append("CodeFull", code.CodeFull)
+	rec.Append("CodeToRun", code.CodeToRun)
+	rec.Append("RunCmd", code.RunCmd)
+	rec.Append("Output", code.Output)
+	err := c.saveRecord(rec)
+	must(err)
+	c.sha1ToGlotOutput[code.Sha1()] = code
+}
+
+func (c *Cache) loadGlotOutput(rec *siser.Record) {
+	panicIf(rec.Name != recNameGlotOutput)
+	sha1, ok := rec.Get("Sha1")
+	panicIf(!ok || sha1 == "")
+	panicIf(c.sha1ToGlotOutput[sha1] != nil)
+
+	o := &GlotOutput{}
+	o.Lang, ok = rec.Get("Lang")
+	panicIf(!ok)
+	o.FileName, ok = rec.Get("FileName")
+	panicIf(!ok)
+	o.CodeFull, ok = rec.Get("CodeFull")
+	panicIf(!ok)
+	o.CodeToRun, ok = rec.Get("CodeToRun")
+	panicIf(!ok)
+	o.RunCmd, ok = rec.Get("RunCmd")
+	panicIf(!ok)
+	o.Output, ok = rec.Get("Output")
+	panicIf(!ok)
+
+	panicIf(o.CodeFull == "")
+	panicIf(sha1 != o.Sha1(), "sha1 != code.Sha1() (%s != %s)", sha1, o.Sha1())
+	c.sha1ToGlotOutput[sha1] = o
+}
+
+func (c *Cache) saveGlotID(sha1, glotID string) {
+	panicIf(c.sha1ToGlotID[sha1] != "")
+	rec := &siser.Record{
+		Name: recNameGlotID,
 	}
 	panicIf(sha1 == "")
 	rec.Append("Sha1", sha1)
 	rec.Append("GlotID", glotID)
-	rec.Append("GlotOutput", glotOutput)
 	err := c.saveRecord(rec)
 	must(err)
+	c.sha1ToGlotID[sha1] = glotID
 }
 
-func (c *Cache) loadCodeInfo(rec *siser.Record) {
+func (c *Cache) loadGlotID(rec *siser.Record) {
+	panicIf(rec.Name != recNameGlotID)
 	sha1, ok := rec.Get("Sha1")
+	panicIf(!ok || sha1 == "")
+	panicIf(c.sha1ToGlotID[sha1] != "")
+
+	glotid, ok := rec.Get("GlotID")
 	panicIf(!ok)
-	code, _ := c.getCodeInfoBySha1(sha1)
-
-	panicIf(rec.Name != "code")
-	for _, e := range rec.Entries {
-		switch e.Key {
-		case "CodeFull":
-			panicIf(code.CodeFull != "" && code.CodeFull != e.Value)
-			code.CodeFull = e.Value
-		case "CodeToRun":
-			code.CodeToRun = e.Value
-		case "Lang":
-			code.Lang = e.Value
-		case "Sha1":
-			// no-op
-		default:
-			must(fmt.Errorf("Unrecognized key '%s'", e.Key))
-		}
-	}
-	panicIf(code.CodeFull == "")
-	panicIf(sha1 != "" && sha1 != code.Sha1(), "sha1 != code.Sha1() (%s != %s)", sha1, code.Sha1())
-}
-
-func (c *Cache) loadGlot(rec *siser.Record) {
-	sha1, ok := rec.Get("Sha1")
-	panicIf(!ok)
-	code, _ := c.getCodeInfoBySha1(sha1)
-
-	panicIf(rec.Name != "code")
-	for _, e := range rec.Entries {
-		switch e.Key {
-		case "GlotID":
-			code.GlotID = e.Value
-		case "GlotOutput":
-			code.GlotOutput = e.Value
-		case "Sha1":
-			// no-op
-		default:
-			must(fmt.Errorf("Unrecognized key '%s'", e.Key))
-		}
-	}
-	panicIf(code.CodeFull == "")
-	panicIf(sha1 != "" && sha1 != code.Sha1(), "sha1 != code.Sha1() (%s != %s)", sha1, code.Sha1())
+	c.sha1ToGlotID[sha1] = glotid
 }
 
 func loadCache(path string) *Cache {
@@ -170,10 +136,7 @@ func loadCache(path string) *Cache {
 	_, err := os.Stat(dir)
 	must(err)
 
-	c := &Cache{
-		path:       path,
-		sha1ToCode: map[string]*CodeInfo{},
-	}
+	c := NewCache(path)
 
 	f, err := os.Open(path)
 	if err != nil {
@@ -187,10 +150,10 @@ func loadCache(path string) *Cache {
 	r := siser.NewReader(bufio.NewReader(f))
 	for r.ReadNextRecord() {
 		rec := r.Record
-		if rec.Name == "code" {
-			c.loadCodeInfo(rec)
-		} else if rec.Name == "glot" {
-			c.loadGlot(rec)
+		if rec.Name == recNameGlotOutput {
+			c.loadGlotOutput(rec)
+		} else if rec.Name == recNameGlotID {
+			c.loadGlotID(rec)
 		} else {
 			panic(fmt.Errorf("unknown record type: '%s'", rec.Name))
 		}

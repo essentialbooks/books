@@ -282,7 +282,7 @@ func (g *HTMLGenerator) genReplitEmbed(block *notionapi.Block) {
 func (g *HTMLGenerator) genSourceFile(f *SourceFile) {
 	{
 		var tmp bytes.Buffer
-		code := f.DataCode()
+		code := f.CodeToShow()
 		lang := f.Lang
 		htmlHighlight(&tmp, string(code), lang, "")
 		d := tmp.Bytes()
@@ -295,10 +295,10 @@ func (g *HTMLGenerator) genSourceFile(f *SourceFile) {
 		g.f.WriteString(s)
 	}
 
-	if len(f.Output) != 0 {
+	output := f.Output()
+	if len(output) != 0 {
 		var tmp bytes.Buffer
-		code := f.Output
-		htmlHighlight(&tmp, string(code), "text", "")
+		htmlHighlight(&tmp, output, "text", "")
 		d := tmp.Bytes()
 		info := CodeBlockInfo{
 			Lang: "output",
@@ -564,9 +564,9 @@ func (g *HTMLGenerator) genBlock(block *notionapi.Block) {
 			sf.Directive.NoOutput = true
 		}
 		setDefaultFileNameFromLanguage(sf)
-		err = getOutputCached(g.book, sf)
+		err = getOutputCached(g.book.cache, sf)
 		if err != nil {
-			lg("getOutputCached() failed.\nsf.DataToRun():\n%s\n", sf.DataToRun())
+			lg("getOutputCached() failed.\nsf.CodeToRun():\n%s\n", sf.CodeToRun)
 			panicIfErr(err)
 		}
 		g.genSourceFile(sf)
