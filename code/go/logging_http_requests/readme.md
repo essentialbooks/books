@@ -1,4 +1,4 @@
-This is a sample application that implements a version of Go HTTP server logging ass described in https://onepage.nopub.io/p/Logging-HTTP-requests-in-Go-233de7fe59a747078b35b82a1b035d36
+This is a sample application that implements a version of Go HTTP server logging as described in https://onepage.nopub.io/p/Logging-HTTP-requests-in-Go-233de7fe59a747078b35b82a1b035d36
 
 License: public domain, you can use it for free, without attribution.
 
