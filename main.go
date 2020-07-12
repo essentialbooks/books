@@ -134,34 +134,6 @@ func initMinify() {
 	}
 }
 
-func initBook(book *Book) {
-	var err error
-
-	u.CreateDirMust(book.NotionCacheDir())
-
-	if false {
-		loadCache("cache/go/cache.txt")
-		os.Exit(0)
-	}
-
-	book.idToPage = map[string]*Page{}
-	book.cache = loadCache(book.cachePath())
-	must(err)
-}
-
-func findBook(id string) *Book {
-	for _, book := range allBooks {
-		// fuzzy match - whatever hits
-		parts := []string{book.Title, book.Dir, book.NotionStartPageID}
-		for _, s := range parts {
-			if strings.EqualFold(s, id) {
-				return book
-			}
-		}
-	}
-	return nil
-}
-
 func adHoc() {
 	// only needs to be run when we add new covers
 	if false {

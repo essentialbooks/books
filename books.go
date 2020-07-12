@@ -1,5 +1,7 @@
 package main
 
+import "strings"
+
 var (
 	bookGo = &Book{
 		Title:          "Go",
@@ -298,3 +300,16 @@ var (
 	}
 	allBooks = append(booksMain, booksUnpublished...)
 )
+
+func findBook(id string) *Book {
+	for _, book := range allBooks {
+		// fuzzy match - whatever hits
+		parts := []string{book.Title, book.Dir, book.NotionStartPageID}
+		for _, s := range parts {
+			if strings.EqualFold(s, id) {
+				return book
+			}
+		}
+	}
+	return nil
+}

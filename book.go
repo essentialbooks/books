@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/kjk/notionapi"
@@ -197,18 +198,33 @@ func calcPageHeadings(page *Page) {
 	page.Headings = headings
 }
 
-func (book *Book) afterPageDownload(page *notionapi.Page) error {
+func (b *Book) afterPageDownload(page *notionapi.Page) error {
 	id := toNoDashID(page.ID)
 	p := &Page{
 		NotionPage: page,
 		NotionID:   id,
-		Book:       book,
+		Book:       b,
 	}
-	book.idToPage[id] = p
+	b.idToPage[id] = p
 	evalCodeSnippetsForPage(p)
-	downloadImages(book, p)
+	downloadImages(b, p)
 	calcPageHeadings(p)
 	return nil
+}
+
+func initBook(book *Book) {
+	var err error
+
+	u.CreateDirMust(book.NotionCacheDir())
+
+	if false {
+		loadCache("cache/go/cache.txt")
+		os.Exit(0)
+	}
+
+	book.idToPage = map[string]*Page{}
+	book.cache = loadCache(book.cachePath())
+	must(err)
 }
 
 func downloadBook(book *Book) {
