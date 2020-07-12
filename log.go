@@ -9,6 +9,13 @@ var (
 	logFile *os.File
 )
 
+func fmtSmart(format string, args ...interface{}) string {
+	if len(args) == 0 {
+		return format
+	}
+	return fmt.Sprintf(format, args...)
+}
+
 func openLog() func() {
 	var err error
 	logFile, err = os.Create("log.txt")

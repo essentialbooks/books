@@ -12,37 +12,8 @@ import (
 	"github.com/kjk/u"
 )
 
-func must(err error) {
-	u.Must(err)
-}
-
-func fmtSmart(format string, args ...interface{}) string {
-	if len(args) == 0 {
-		return format
-	}
-	return fmt.Sprintf(format, args...)
-}
-
-func fmtArgs(args ...interface{}) string {
-	if len(args) == 0 {
-		return ""
-	}
-	format := args[0].(string)
-	if len(args) == 1 {
-		return format
-	}
-	return fmt.Sprintf(format, args[1:]...)
-}
-
-func panicIf(cond bool, args ...interface{}) {
-	if !cond {
-		return
-	}
-	if len(args) == 0 {
-		panic("condition failed")
-	}
-	panic(fmtArgs(args...))
-}
+var must = u.Must
+var panicIf = u.PanicIf
 
 func logIfError(err error) {
 	if err != nil {

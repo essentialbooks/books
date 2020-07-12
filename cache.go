@@ -27,32 +27,12 @@ type Cache struct {
 	gistSha1ToGistOutput map[string]string
 }
 
-func NewCache(path string) *Cache {
-	return &Cache{
-		path:                 path,
-		gistIDToGist:         map[string]string{},
-		gistSha1ToGistOutput: map[string]string{},
-	}
-}
-
 func (c *Cache) saveRecord(rec *siser.Record) error {
 	f := openForAppend(c.path)
 	defer u.CloseNoError(f)
 	w := siser.NewWriter(f)
 	_, err := w.WriteRecord(rec)
 	return err
-}
-
-type EvalOutput struct {
-	Lang      string
-	FileName  string
-	CodeFull  string
-	CodeToRun string
-	RunCmd    string
-	Output    string
-
-	// sha1 of CodeFull, calculated on demand
-	sha1 string
 }
 
 func recGetMust(rec *siser.Record, name string) string {
@@ -65,13 +45,6 @@ func recGetMustNonEmpty(rec *siser.Record, name string) string {
 	v, ok := rec.Get(name)
 	u.PanicIf(!ok || v == "")
 	return v
-}
-
-func (c *EvalOutput) Sha1() string {
-	if c.sha1 == "" {
-		c.sha1 = u.Sha1HexOfBytes([]byte(c.CodeFull))
-	}
-	return c.sha1
 }
 
 func (c *Cache) saveGist(gistID, gist string) {
@@ -121,7 +94,11 @@ func loadCache(path string) *Cache {
 	_, err := os.Stat(dir)
 	must(err)
 
-	c := NewCache(path)
+	c := &Cache{
+		path:                 path,
+		gistIDToGist:         map[string]string{},
+		gistSha1ToGistOutput: map[string]string{},
+	}
 
 	f, err := os.Open(path)
 	if err != nil {
