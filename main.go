@@ -36,46 +36,6 @@ var (
 )
 
 var (
-	booksMain = []*Book{
-		bookGo,
-		bookCpp,
-		bookJavaScript,
-		bookCSS,
-		bookHTML,
-		bookHTMLCanvas,
-		bookJava,
-		bookKotlin,
-		bookCsharp,
-		bookPython,
-		bookPostgresql,
-		bookMysql,
-		bookIOS,
-		bookAndroid,
-		bookBash,
-		bookPowershell,
-		bookBatch,
-		bookGit,
-		bookPHP,
-		bookRuby,
-		bookNETFramework,
-		bookNode,
-		bookDart,
-		bookTypeScript,
-		bookSwift,
-	}
-	booksUnpublished = []*Book{
-		bookAlgorithm,
-		bookC,
-		bookObjectiveC,
-		bookReact,
-		bookReactNative,
-		bookRubyOnRails,
-		bookSql,
-	}
-	allBooks = append(booksMain, booksUnpublished...)
-)
-
-var (
 	nProcessed            = 0
 	nNotionPagesFromCache = 0
 	nDownloadedPages      = 0
