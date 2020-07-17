@@ -207,7 +207,7 @@ var (
 		Title:          "React",
 		TitleLong:      "Essential React",
 		Dir:            "react",
-		CoverImageName: "Ruby.png", // TODO: need the cover
+		CoverImageName: "React.png",
 		// https://www.notion.so/kjkpublic/Essential-React-2a68b0d047344fdb97c510b64a7a3e2d
 		NotionStartPageID: "2a68b0d047344fdb97c510b64a7a3e2d",
 	}
@@ -215,7 +215,7 @@ var (
 		Title:          "React Native",
 		TitleLong:      "Essential React Native",
 		Dir:            "reactnative",
-		CoverImageName: "Ruby.png", // TODO: need the cover
+		CoverImageName: "ReactNative.png",
 		// https://www.notion.so/kjkpublic/Essential-React-Native-c7980909d5144eb5aee8b28bbe60ec9b
 		NotionStartPageID: "c7980909d5144eb5aee8b28bbe60ec9b",
 	}
