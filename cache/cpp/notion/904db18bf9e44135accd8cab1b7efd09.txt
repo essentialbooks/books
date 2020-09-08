@@ -1,4 +1,4 @@
-1486 1573020475257 httpcache-v1
+1936 1599556417205 httpcache-v1
 Method: POST
 URL: https://www.notion.so/api/v3/getRecordValues
 Body:+110
@@ -10,7 +10,7 @@ Body:+110
     }
   ]
 }
-Response:+1286
+Response:+1736
 {
   "results": [
     {
@@ -18,8 +18,17 @@ Response:+1286
       "value": {
         "alive": true,
         "content": [
-          "78dfa4cc-40c0-4e2a-9e29-66072ce1bfd4",
-          "e508bfaa-7ad6-4393-87f9-baf709bed970"
+          "8b8e5a67-ea35-445c-90b9-2da850335910",
+          "74c44bdb-00d3-486a-8067-79df2cc99cf1",
+          "b83b3a46-cada-4817-8e2a-f758a69a27d1",
+          "f0042561-ef01-4ffc-ac86-cfe46e43f6b5",
+          "47d5f9ce-9c01-497a-bd32-9b8f51ee0900",
+          "c8f334c1-8142-4ccd-98ee-4606f370362a",
+          "bc24fb8b-fddd-4d90-b864-070598fe82b7",
+          "b82cecfb-ee77-4ccd-a810-28e2c5ac5419",
+          "cfeae2a1-2538-4485-9b43-17a008b8b2bd",
+          "c3905e15-b0f2-44dc-88d0-075e70200c96",
+          "669bb258-1ed3-4ee1-9b7f-35cdb4cb23ce"
         ],
         "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
         "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
@@ -33,7 +42,7 @@ Response:+1286
         "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
         "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
         "last_edited_by_table": "notion_user",
-        "last_edited_time": 1550522880000,
+        "last_edited_time": 1595066880000,
         "parent_id": "ad527dc6-d4a7-420b-9234-94d0b9bfb560",
         "parent_table": "block",
         "permissions": [
@@ -51,12 +60,12 @@ Response:+1286
           ]
         },
         "type": "page",
-        "version": 30
+        "version": 45
       }
     }
   ]
 }
-13642 1573020475257 httpcache-v1
+29673 1599556417206 httpcache-v1
 Method: POST
 URL: https://www.notion.so/api/v3/loadPageChunk
 Body:+152
@@ -69,44 +78,248 @@ Body:+152
   "pageId": "904db18b-f9e4-4135-accd-8cab1b7efd09",
   "verticalColumns": false
 }
-Response:+13401
+Response:+29432
 {
   "cursor": {
     "stack": []
   },
   "recordMap": {
     "block": {
-      "78dfa4cc-40c0-4e2a-9e29-66072ce1bfd4": {
+      "47d5f9ce-9c01-497a-bd32-9b8f51ee0900": {
         "role": "comment_only",
         "value": {
           "alive": true,
-          "content": [
-            "8b8e5a67-ea35-445c-90b9-2da850335910",
-            "74c44bdb-00d3-486a-8067-79df2cc99cf1",
-            "b83b3a46-cada-4817-8e2a-f758a69a27d1",
-            "f0042561-ef01-4ffc-ac86-cfe46e43f6b5"
-          ],
           "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
-          "created_time": 1550522692263,
-          "format": {
-            "page_full_width": true,
-            "page_small_text": true
-          },
-          "id": "78dfa4cc-40c0-4e2a-9e29-66072ce1bfd4",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522694788,
+          "id": "47d5f9ce-9c01-497a-bd32-9b8f51ee0900",
           "ignore_block_count": true,
           "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
-          "last_edited_time": 1550710740000,
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
           "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
           "parent_table": "block",
           "properties": {
             "title": [
               [
-                "Pimpl Idiom"
+                "In the header file:"
               ]
             ]
           },
-          "type": "page",
-          "version": 8
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "text",
+          "version": 3
+        }
+      },
+      "669bb258-1ed3-4ee1-9b7f-35cdb4cb23ce": {
+        "role": "comment_only",
+        "value": {
+          "alive": true,
+          "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522694789,
+          "id": "669bb258-1ed3-4ee1-9b7f-35cdb4cb23ce",
+          "ignore_block_count": true,
+          "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
+          "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
+          "parent_table": "block",
+          "properties": {
+            "title": [
+              [
+                "Danger: Note that for this to work with "
+              ],
+              [
+                "unique_ptr",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                ", "
+              ],
+              [
+                "~Widget()",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " must be implemented at a point in a file where the "
+              ],
+              [
+                "Impl",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " is fully visible. You can "
+              ],
+              [
+                "=default",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " it there, but if "
+              ],
+              [
+                "=default",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " where "
+              ],
+              [
+                "Impl",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " is undefined, the program may easily become ill-formed, no diagnostic required."
+              ]
+            ]
+          },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "text",
+          "version": 3
+        }
+      },
+      "74c44bdb-00d3-486a-8067-79df2cc99cf1": {
+        "role": "comment_only",
+        "value": {
+          "alive": true,
+          "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522692262,
+          "id": "74c44bdb-00d3-486a-8067-79df2cc99cf1",
+          "ignore_block_count": true,
+          "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
+          "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
+          "parent_table": "block",
+          "properties": {
+            "title": [
+              [
+                "The "
+              ],
+              [
+                "pimpl idiom",
+                [
+                  [
+                    "b"
+                  ]
+                ]
+              ],
+              [
+                " ("
+              ],
+              [
+                "p",
+                [
+                  [
+                    "b"
+                  ]
+                ]
+              ],
+              [
+                "ointer to "
+              ],
+              [
+                "impl",
+                [
+                  [
+                    "b"
+                  ]
+                ]
+              ],
+              [
+                "ementation, sometimes referred to as "
+              ],
+              [
+                "opaque pointer",
+                [
+                  [
+                    "i"
+                  ]
+                ]
+              ],
+              [
+                " or "
+              ],
+              [
+                "cheshire cat technique",
+                [
+                  [
+                    "i"
+                  ]
+                ]
+              ],
+              [
+                "), reduces the compilation times of a class by moving all its private data members into a struct defined in the .cpp file."
+              ]
+            ]
+          },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "text",
+          "version": 3
+        }
+      },
+      "8b8e5a67-ea35-445c-90b9-2da850335910": {
+        "role": "comment_only",
+        "value": {
+          "alive": true,
+          "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522692259,
+          "id": "8b8e5a67-ea35-445c-90b9-2da850335910",
+          "ignore_block_count": true,
+          "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
+          "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
+          "parent_table": "block",
+          "properties": {
+            "title": [
+              [
+                "Remarks"
+              ]
+            ]
+          },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "sub_header",
+          "version": 3
         }
       },
       "904db18b-f9e4-4135-accd-8cab1b7efd09": {
@@ -114,8 +327,17 @@ Response:+13401
         "value": {
           "alive": true,
           "content": [
-            "78dfa4cc-40c0-4e2a-9e29-66072ce1bfd4",
-            "e508bfaa-7ad6-4393-87f9-baf709bed970"
+            "8b8e5a67-ea35-445c-90b9-2da850335910",
+            "74c44bdb-00d3-486a-8067-79df2cc99cf1",
+            "b83b3a46-cada-4817-8e2a-f758a69a27d1",
+            "f0042561-ef01-4ffc-ac86-cfe46e43f6b5",
+            "47d5f9ce-9c01-497a-bd32-9b8f51ee0900",
+            "c8f334c1-8142-4ccd-98ee-4606f370362a",
+            "bc24fb8b-fddd-4d90-b864-070598fe82b7",
+            "b82cecfb-ee77-4ccd-a810-28e2c5ac5419",
+            "cfeae2a1-2538-4485-9b43-17a008b8b2bd",
+            "c3905e15-b0f2-44dc-88d0-075e70200c96",
+            "669bb258-1ed3-4ee1-9b7f-35cdb4cb23ce"
           ],
           "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
           "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
@@ -129,7 +351,7 @@ Response:+13401
           "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
           "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
           "last_edited_by_table": "notion_user",
-          "last_edited_time": 1550522880000,
+          "last_edited_time": 1595066880000,
           "parent_id": "ad527dc6-d4a7-420b-9234-94d0b9bfb560",
           "parent_table": "block",
           "permissions": [
@@ -146,8 +368,10 @@ Response:+13401
               ]
             ]
           },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
           "type": "page",
-          "version": 30
+          "version": 45
         }
       },
       "ad527dc6-d4a7-420b-9234-94d0b9bfb560": {
@@ -166,8 +390,8 @@ Response:+13401
             "ea4c768f-8ffd-48a6-bc20-bd19b214545c",
             "3724ad56-a879-48bf-847e-5adcfcb60c18",
             "52470773-ddd6-4b1b-ad39-7b26f7b28f00",
-            "ee10cf45-84c7-467c-8068-ea9076a2401a",
             "6fdcface-f439-4f73-87ef-255a8f378573",
+            "ee10cf45-84c7-467c-8068-ea9076a2401a",
             "4dc21607-5d04-4a95-bced-ba855fbfa11f",
             "546689ba-7cc0-49cb-ae94-05172f20d6dc",
             "193b149e-733b-4344-8898-29dc4a2ef0b0",
@@ -309,6 +533,8 @@ Response:+13401
             "10708491-24c3-48f4-b554-d2665157037f"
           ],
           "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
           "created_time": 1550521908832,
           "format": {
             "page_full_width": true,
@@ -316,7 +542,9 @@ Response:+13401
           },
           "id": "ad527dc6-d4a7-420b-9234-94d0b9bfb560",
           "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
-          "last_edited_time": 1570604640000,
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1594594920000,
           "parent_id": "204dd4d3-a72c-4a9e-ba37-ebd5fc5ba989",
           "parent_table": "block",
           "permissions": [
@@ -333,43 +561,296 @@ Response:+13401
               ]
             ]
           },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
           "type": "page",
-          "version": 634
+          "version": 637
         }
       },
-      "e508bfaa-7ad6-4393-87f9-baf709bed970": {
+      "b82cecfb-ee77-4ccd-a810-28e2c5ac5419": {
         "role": "comment_only",
         "value": {
           "alive": true,
-          "content": [
-            "47d5f9ce-9c01-497a-bd32-9b8f51ee0900",
-            "c8f334c1-8142-4ccd-98ee-4606f370362a",
-            "bc24fb8b-fddd-4d90-b864-070598fe82b7",
-            "b82cecfb-ee77-4ccd-a810-28e2c5ac5419",
-            "cfeae2a1-2538-4485-9b43-17a008b8b2bd",
-            "c3905e15-b0f2-44dc-88d0-075e70200c96",
-            "669bb258-1ed3-4ee1-9b7f-35cdb4cb23ce"
-          ],
           "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
-          "created_time": 1550522694789,
-          "format": {
-            "page_full_width": true,
-            "page_small_text": true
-          },
-          "id": "e508bfaa-7ad6-4393-87f9-baf709bed970",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522694788,
+          "id": "b82cecfb-ee77-4ccd-a810-28e2c5ac5419",
           "ignore_block_count": true,
           "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
-          "last_edited_time": 1550710740000,
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
+          "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
+          "parent_table": "block",
+          "properties": {
+            "language": [
+              [
+                "C++"
+              ]
+            ],
+            "title": [
+              [
+                "// widget.cpp\n\n#include \"widget.h\"\n#include \"reallycomplextype.h\" // no need to include this header inside widget.h\n\nstruct Widget::Impl\n{\n    // the attributes needed from Widget go here\n    ReallyComplexType rct;\n};\n\nWidget::Widget() :\n    pImpl(std::make_unique\u003cImpl\u003e())\n{}\n\nWidget::~Widget() = default;\n\nvoid Widget::DoSomething()\n{\n    // do the stuff here with pImpl\n}"
+              ]
+            ]
+          },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "code",
+          "version": 9
+        }
+      },
+      "b83b3a46-cada-4817-8e2a-f758a69a27d1": {
+        "role": "comment_only",
+        "value": {
+          "alive": true,
+          "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522692263,
+          "id": "b83b3a46-cada-4817-8e2a-f758a69a27d1",
+          "ignore_block_count": true,
+          "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
           "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
           "parent_table": "block",
           "properties": {
             "title": [
               [
-                "Basic Pimpl idiom"
+                "The class owns a pointer to the implementation. This way, it can be forward declared, so that the header file does not need to "
+              ],
+              [
+                "#include",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " classes that are used in private member variables."
               ]
             ]
           },
-          "type": "page",
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "text",
+          "version": 7
+        }
+      },
+      "bc24fb8b-fddd-4d90-b864-070598fe82b7": {
+        "role": "comment_only",
+        "value": {
+          "alive": true,
+          "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522694788,
+          "id": "bc24fb8b-fddd-4d90-b864-070598fe82b7",
+          "ignore_block_count": true,
+          "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
+          "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
+          "parent_table": "block",
+          "properties": {
+            "title": [
+              [
+                "In the implementation file:"
+              ]
+            ]
+          },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "text",
+          "version": 3
+        }
+      },
+      "c3905e15-b0f2-44dc-88d0-075e70200c96": {
+        "role": "comment_only",
+        "value": {
+          "alive": true,
+          "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522694789,
+          "id": "c3905e15-b0f2-44dc-88d0-075e70200c96",
+          "ignore_block_count": true,
+          "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
+          "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
+          "parent_table": "block",
+          "properties": {
+            "title": [
+              [
+                "pImpl",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " stands for “pointer to implementation”. The “real” implementation of "
+              ],
+              [
+                "Widget",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " is in the "
+              ],
+              [
+                "pImpl",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                "."
+              ]
+            ]
+          },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "text",
+          "version": 3
+        }
+      },
+      "c8f334c1-8142-4ccd-98ee-4606f370362a": {
+        "role": "comment_only",
+        "value": {
+          "alive": true,
+          "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522694788,
+          "id": "c8f334c1-8142-4ccd-98ee-4606f370362a",
+          "ignore_block_count": true,
+          "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
+          "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
+          "parent_table": "block",
+          "properties": {
+            "language": [
+              [
+                "C++"
+              ]
+            ],
+            "title": [
+              [
+                "// widget.h\n\n#include \u003cmemory\u003e  // std::unique_ptr\n#include \u003cexperimental/propagate_const\u003e\n\nclass Widget\n{\n    public:\n        Widget();\n        ~Widget();\n        void DoSomething();\n\n    private:\n        // the pImpl idiom is named after the typical variable name used\n        // ie, pImpl:\n        struct Impl;                    // forward declaration\n        std::experimental::propagate_const\u003cstd::unique_ptr\u003c Impl \u003e\u003e pImpl;  // ptr to actual implementation\n};"
+              ]
+            ]
+          },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "code",
+          "version": 9
+        }
+      },
+      "cfeae2a1-2538-4485-9b43-17a008b8b2bd": {
+        "role": "comment_only",
+        "value": {
+          "alive": true,
+          "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522694789,
+          "id": "cfeae2a1-2538-4485-9b43-17a008b8b2bd",
+          "ignore_block_count": true,
+          "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
+          "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
+          "parent_table": "block",
+          "properties": {
+            "title": [
+              [
+                "The "
+              ],
+              [
+                "pImpl",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " contains the "
+              ],
+              [
+                "Widget",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " state (or some/most of it). Instead of the "
+              ],
+              [
+                "Widget",
+                [
+                  [
+                    "c"
+                  ]
+                ]
+              ],
+              [
+                " description of state being exposed in the header file, it can be only exposed within the implementation."
+              ]
+            ]
+          },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "text",
+          "version": 3
+        }
+      },
+      "f0042561-ef01-4ffc-ac86-cfe46e43f6b5": {
+        "role": "comment_only",
+        "value": {
+          "alive": true,
+          "created_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "created_by_table": "notion_user",
+          "created_time": 1550522692263,
+          "id": "f0042561-ef01-4ffc-ac86-cfe46e43f6b5",
+          "ignore_block_count": true,
+          "last_edited_by": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_id": "bb760e2d-d679-4b64-b2a9-03005b21870a",
+          "last_edited_by_table": "notion_user",
+          "last_edited_time": 1595066880000,
+          "parent_id": "904db18b-f9e4-4135-accd-8cab1b7efd09",
+          "parent_table": "block",
+          "properties": {
+            "title": [
+              [
+                "When using the pimpl idiom, changing a private data member does not require recompiling classes that depend on it."
+              ]
+            ]
+          },
+          "shard_id": 241632,
+          "space_id": "cf9fa7dd-b245-42a0-b929-d5a276b3afe0",
+          "type": "text",
           "version": 8
         }
       }
@@ -386,7 +867,7 @@ Response:+13401
           "mobile_onboarding_completed": true,
           "onboarding_completed": true,
           "profile_photo": "https://s3-us-west-2.amazonaws.com/public.notion-static.com/2dcaa66c-7674-4ff6-9924-601785b63561/head-bw-640x960.png",
-          "version": 225
+          "version": 339
         }
       }
     },
