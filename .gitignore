@@ -6,7 +6,7 @@ gen.exe
 mdfmt/node_modules/
 .DS_Store
 .idea/
-log.txt
+execlog.txt
 node_modules/
 package-lock.json
 hili_hang.txt

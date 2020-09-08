@@ -78,3 +78,26 @@ export function makeDebouncer(timeInMs) {
     }, timeInMs);
   };
 }
+
+// d is json data to be logged to logflare
+const logflareURL = "https://api.logflare.app/logs?api_key=EMVM15g1Nf_M&source=b72adcc3-d077-46cc-92c3-2f0c55cf3b69";
+
+export function logflare(d) {
+  const data = {
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8'
+    },
+    method: "post",
+    body: JSON.stringify(d),
+  };
+  function thenFn(res) {
+    console.log(`sent log to logflare`);
+    console.log(res);
+  }
+  function catchFn(res) {
+    console.log(`exception in logflare`);
+  }
+  fetch(logflareURL, data)
+  .then(thenFn)
+  .catch(catchFn);
+}

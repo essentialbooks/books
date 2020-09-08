@@ -18,7 +18,7 @@ func fmtSmart(format string, args ...interface{}) string {
 
 func openLog() func() {
 	var err error
-	logFile, err = os.Create("log.txt")
+	logFile, err = os.Create("execlog.txt")
 	must(err)
 	return func() {
 		_ = logFile.Close()
